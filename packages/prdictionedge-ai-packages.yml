@@ -1,0 +1,34 @@
+generated: '2026-09-19'
+method: searched
+source: https://aux.prdictionedge.ai/agents/quickstart
+registries_checked:
+- registry: npm
+  query: registry.npmjs.org/-/v1/search?text=prdictionedge
+  result: no packages
+- registry: pypi
+  query: pypi.org/pypi/{prdictionedge,aux-prdictionedge,auxedge}/json
+  result: 404 for each
+- registry: github
+  query: api.github.com/search/users?q=prdictionedge and /search/repositories?q=prdictionedge; github.com/{prdictionedge,PrdictionEdge,aux-prdictionedge}
+  result: 0 users, 0 repos; all three org URLs 404
+note: >-
+  The provider deliberately ships no registry package — llms.txt, aux.json and the quickstart all say "no ... package installation
+  is required". The only first-party client is a zero-dependency Node.js script distributed from the docs host by URL; it is
+  unpinned (no version in the URL or in the file), so a consumer cannot tell which revision they fetched, and there is no metadata
+  endpoint to read a version or publish date from. A third-party-hosted GitHub repo (MarketPulsePro/aux-transaction-preflight)
+  describes an earlier AUX iteration and links to surfaces that now 404; its ownership could not be verified (GitHub API rate
+  limited during this pass) and it contains no client code, so it is not recorded as a package.
+packages:
+- language: javascript
+  runtime: Node.js 18 or newer
+  registry: cdn
+  name: counterparty-check.mjs
+  url: https://aux.prdictionedge.ai/examples/counterparty-check.mjs
+  install: curl -fsS https://aux.prdictionedge.ai/examples/counterparty-check.mjs -o counterparty-check.mjs
+  official: true
+  version: null
+  published: null
+  version_note: Unpinned URL distribution; the script carries no version string and the CDN exposes no package metadata. Fetched 2026-09-19 as HTTP 200 application/javascript, 7,366 bytes.
+  dependencies: none (built-in fetch only)
+  covers: [createCertificationAttempt, getCertificationAttempt, verifyAuxCertification]
+  description: Creates a durable counterparty certification attempt, follows bounded retries via status_url, verifies the terminal certification signature, and prints result, outstanding requirements, evidence sources and limitations.

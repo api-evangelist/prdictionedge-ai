@@ -1,0 +1,89 @@
+# OpenAPI Overlay 1.0.0 — API Evangelist enhancements to the AUX Evidence and Certification API.
+# generated: 2026-09-19 | method: generated | extends openapi/prdictionedge-ai-openapi.yml (never mutated).
+overlay: 1.0.0
+info:
+  title: API Evangelist overlay for the AUX Evidence and Certification API
+  version: 2026-09-19
+extends: openapi/prdictionedge-ai-openapi.yml
+actions:
+- target: $.info
+  description: Add contact, terms and provenance the source spec omits (values from the provider's own pages).
+  update:
+    contact:
+      name: AUX by PrdictionEdge
+      url: https://aux.prdictionedge.ai/demo?product=aux
+    termsOfService: https://aux.prdictionedge.ai/terms
+    x-apievangelist-provenance:
+      source: https://api.aux.prdictionedge.ai/openapi.json
+      fetched: '2026-09-19'
+      http_status: 200
+- target: $
+  description: Declare the tag set the source spec lacks (it has no tags at all).
+  update:
+    tags:
+    - {name: Discovery, description: Agent card and certification-profile discovery}
+    - {name: Evidence, description: Independent evidence resolution and evidence-bundle verification}
+    - {name: Certification, description: Requirements, durable attempts, synchronous certification and receipt verification}
+    - {name: Policy, description: Downstream consumer and domain-published acceptance policy checks}
+    - {name: Handoff, description: Signed non-executing agent-to-agent handoffs and single-use consumption}
+- target: $.paths['/.well-known/agent-card.json'].get
+  update: {tags: [Discovery]}
+- target: $.paths['/v1/certification-profiles'].get
+  update: {tags: [Discovery]}
+- target: $.paths['/v1/evidence/sanctions'].post
+  update: {tags: [Evidence]}
+- target: $.paths['/v1/evidence/domain-identity'].post
+  update: {tags: [Evidence]}
+- target: $.paths['/v1/evidence/business-identity'].post
+  update: {tags: [Evidence]}
+- target: $.paths['/v1/evidence/source-attestation'].get
+  update: {tags: [Evidence]}
+- target: $.paths['/v1/evidence/source-attestation'].post
+  update: {tags: [Evidence]}
+- target: $.paths['/v1/evidence/verify'].post
+  update: {tags: [Evidence]}
+- target: $.paths['/v1/certification-requirements'].get
+  update: {tags: [Certification]}
+- target: $.paths['/v1/certification-requirements'].post
+  update: {tags: [Certification]}
+- target: $.paths['/v1/certification-attempts'].post
+  update: {tags: [Certification]}
+- target: $.paths['/v1/certification-attempts/{attempt_id}'].get
+  update: {tags: [Certification]}
+- target: $.paths['/v1/certifications'].post
+  update: {tags: [Certification]}
+- target: $.paths['/v1/certifications/verify'].post
+  update: {tags: [Certification]}
+- target: $.paths['/v1/certifications/policy-check'].get
+  update: {tags: [Policy]}
+- target: $.paths['/v1/certifications/policy-check'].post
+  update: {tags: [Policy]}
+- target: $.paths['/v1/certifications/domain-policy-check'].get
+  update: {tags: [Policy]}
+- target: $.paths['/v1/certifications/domain-policy-check'].post
+  update: {tags: [Policy]}
+- target: $.paths['/v1/certification-handoffs'].post
+  update: {tags: [Handoff]}
+- target: $.paths['/v1/certification-handoffs/verify'].post
+  update: {tags: [Handoff]}
+- target: $.paths['/v1/certification-handoffs/consume'].get
+  update: {tags: [Handoff]}
+- target: $.paths['/v1/certification-handoffs/consume'].post
+  update: {tags: [Handoff]}
+- target: $.paths['/v1/certification-handoffs/consume/verify'].post
+  update: {tags: [Handoff]}
+- target: $.paths['/v1/certification-attempts'].post
+  description: Record the deterministic create-or-reuse semantics the provider documents (conventions/prdictionedge-ai-conventions.yml).
+  update:
+    x-idempotent: true
+    x-idempotency-mechanism: deterministic attempt_id derived from the request; no Idempotency-Key header
+- target: $.paths['/v1/certification-handoffs/consume'].post
+  description: Surface the recipient-domain JWS authentication the source spec leaves undeclared (authentication/prdictionedge-ai-authentication.yml).
+  update:
+    x-authentication: recipient-domain ES256 JWS consumer_assertion in the request body; key at https://{recipient_domain}/.well-known/aux-handoff-consumer.json
+- target: $.components
+  description: Point at the receipt-signing JWKS so verifiers can be built from the contract alone.
+  update:
+    x-receipt-signing:
+      algorithm: ES256
+      jwks: https://api.aux.prdictionedge.ai/.well-known/jwks.json

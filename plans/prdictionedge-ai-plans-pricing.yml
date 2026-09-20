@@ -1,0 +1,35 @@
+generated: '2026-09-19'
+method: searched
+source: https://aux.prdictionedge.ai/.well-known/aux.json
+checked: '2026-09-19'
+sources:
+- "https://aux.prdictionedge.ai/.well-known/aux.json  (access block — commercial_pricing \"not_published\", enterprise_support \"not_published\")"
+- "https://api.aux.prdictionedge.ai/api/status  (payment_required false, price_usd 0, deployment_mode free_public_experiment_with_live_public_evidence)"
+- "https://api.aux.prdictionedge.ai/mcp-tool.json  (certificationRequirements.price_usd 0)"
+- "https://www.prdictionedge.ai/pricing  (307 back to the homepage — no pricing page exists)"
+- "https://aux.prdictionedge.ai/demo?product=aux  (contact form: \"Start a conversation\")"
+summary: >-
+  AUX publishes no plans and no prices. The whole public surface — every certification profile, evidence endpoint, verification and
+  handoff call — is free, keyless and account-less, and the provider says so in machine-readable form (price_usd 0, payment_required
+  false, access.public_counterparty_profile.*_required all false). Commercial and enterprise terms are explicitly "not_published";
+  the roadmap defers "paid pilots or broad integrations" behind an adoption-observation phase and promises cost-per-use evidence
+  "before any paid expansion". The only commercial door is a contact form.
+plan_count: 0
+prices_published: false
+currency: null
+billing_period: null
+public_signup_pricing: false
+free_tier:
+  exists: true
+  scope: entire public API and A2A surface
+  account_required: false
+  api_key_required: false
+  payment_required: false
+  subscription_required: false
+  package_installation_required: false
+  price_usd: 0
+commercial:
+  pricing: not_published
+  enterprise_support: not_published
+  contact: https://aux.prdictionedge.ai/demo?product=aux
+plans: []

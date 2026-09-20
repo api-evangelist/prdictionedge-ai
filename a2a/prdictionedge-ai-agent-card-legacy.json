@@ -1,0 +1,268 @@
+{
+  "name": "AUX Evidence and Certification",
+  "description": "Production discovery for bounded independent evidence, signed certification, policy checks, and non-executing single-use handoffs.",
+  "provider": {
+    "organization": "AUX by PrdictionEdge",
+    "url": "https://aux.prdictionedge.ai"
+  },
+  "version": "0.9.0",
+  "supportedInterfaces": [
+    {
+      "url": "https://api.aux.prdictionedge.ai/a2a/v1",
+      "protocolBinding": "JSONRPC",
+      "protocolVersion": "1.0"
+    }
+  ],
+  "documentationUrl": "https://api.aux.prdictionedge.ai/openapi.json",
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "extendedAgentCard": false
+  },
+  "defaultInputModes": [
+    "text/plain",
+    "application/json"
+  ],
+  "defaultOutputModes": [
+    "text/plain",
+    "application/json"
+  ],
+  "skills": [
+    {
+      "id": "aux-business-identity-evidence",
+      "name": "Independent business identity evidence",
+      "description": "Resolve a submitted legal entity against live GLEIF data without trusting caller-supplied corporate-status claims, and return a signed evidence bundle when the identity is exact and current.",
+      "tags": [
+        "gleif",
+        "legal-entity",
+        "independent-evidence"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ],
+      "examples": [
+        "Resolve this vendor legal name or LEI using an independent public registry."
+      ]
+    },
+    {
+      "id": "aux-sanctions-evidence",
+      "name": "Independent OFAC sanctions evidence",
+      "description": "Resolve bounded official OFAC SDN and consolidated primary/alias screening evidence directly from Treasury source files.",
+      "tags": [
+        "ofac",
+        "sanctions",
+        "independent-evidence"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ],
+      "examples": [
+        "Screen this legal name against the official OFAC lists used by AUX."
+      ]
+    },
+    {
+      "id": "aux-domain-identity-evidence",
+      "name": "Independent domain identity evidence",
+      "description": "Resolve a registered domain through IANA RDAP and bind it to legal identity using HTTPS domain-control evidence, with a trusted-source attestation fallback.",
+      "tags": [
+        "rdap",
+        "domain",
+        "identity",
+        "independent-evidence"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ],
+      "examples": [
+        "Verify this vendor domain independently."
+      ]
+    },
+    {
+      "id": "aux-source-attestation",
+      "name": "Private-source evidence attestation",
+      "description": "Resolve a source domain's published AUX trust document and public key, then verify signed private evidence before applying it to certification.",
+      "tags": [
+        "source-attestation",
+        "provenance",
+        "private-evidence"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ],
+      "examples": [
+        "Verify this ERP, invoice, bank, or policy attestation against the source's published trust key."
+      ]
+    },
+    {
+      "id": "aux-certification-profiles",
+      "name": "Certification profile discovery",
+      "description": "List the live consequential-action profiles AUX can independently certify. Future profile ideas are not advertised until they are live.",
+      "tags": [
+        "certification",
+        "profiles",
+        "discovery"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ],
+      "examples": [
+        "What consequential actions can AUX certify right now?"
+      ]
+    },
+    {
+      "id": "aux-certification-attempts",
+      "name": "Durable certification attempts",
+      "description": "Submit a complete certification request once. AUX creates a deterministic attempt_id, automatically retries SOURCE_TEMPORARILY_UNAVAILABLE reference sources with bounded backoff, and exposes a polling status URL without requiring transaction resubmission.",
+      "tags": [
+        "certification",
+        "retry",
+        "durable-state",
+        "source-availability"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ],
+      "examples": [
+        "Create a durable certification attempt and keep resolving temporary source failures for me."
+      ]
+    },
+    {
+      "id": "aux-certification",
+      "name": "Independent transaction certification",
+      "description": "Attempt bounded end-to-end transaction certification. AUX resolves supported public reference sources automatically and verifies source-anchored private evidence. CERTIFIED is returned only when every requirement is satisfied.",
+      "tags": [
+        "certification",
+        "pre-action",
+        "signed-certification"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ],
+      "examples": [
+        "Attempt full AUX certification for this transaction."
+      ]
+    },
+    {
+      "id": "aux-certification-policy-check",
+      "name": "Portable certification policy check",
+      "description": "Verify a signed AUX certification and apply a downstream consumer acceptance policy over profile/version, receipt age, required requirement coverage, and optional expected hashes. Returns ACCEPT, REJECT, or INVALID_RECEIPT and never executes the underlying action.",
+      "tags": [
+        "certification",
+        "receipt-portability",
+        "policy",
+        "workflow-gate"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ],
+      "examples": [
+        "Does this AUX certification satisfy my workflow acceptance policy?"
+      ]
+    },
+    {
+      "id": "aux-domain-certification-policy-check",
+      "name": "Domain-resolved certification policy check",
+      "description": "Resolve a consumer's published AUX acceptance policy from its HTTPS domain, verify exact issuer/audience/freshness binding, then evaluate a signed AUX certification without allowing caller policy substitution or executing the underlying action.",
+      "tags": [
+        "certification",
+        "policy-interoperability",
+        "domain-trust",
+        "multi-agent"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ],
+      "examples": [
+        "Check this AUX certification against the acceptance policy published by buyer.example."
+      ]
+    },
+    {
+      "id": "aux-certified-agent-handoff",
+      "name": "Certified agent-to-agent handoff",
+      "description": "After recipient-domain policy accepts a valid AUX certification, issue a signed non-executing handoff bound to caller-supplied sender/recipient agent IDs, recipient domain, intended action, nonce, and expiry; a receiving agent can verify the handoff independently.",
+      "tags": [
+        "certification",
+        "multi-agent",
+        "handoff",
+        "receipt-portability"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ],
+      "examples": [
+        "Create a signed handoff of this certified vendor-payment decision to agent://buyer-2 for action pay_vendor."
+      ]
+    },
+    {
+      "id": "aux-handoff-consumption",
+      "name": "Authenticated single-use handoff consumption",
+      "description": "Authenticate the intended recipient through its domain-published signing key, atomically consume one verified handoff once, and return a signed receipt that explicitly states action_executed=false.",
+      "tags": [
+        "certification",
+        "recipient-authentication",
+        "replay-protection",
+        "receipt-portability"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ],
+      "examples": [
+        "Consume this verified AUX handoff once as its intended recipient and return the signed non-executing receipt."
+      ]
+    },
+    {
+      "id": "aux-certification-requirements",
+      "name": "Certification requirements",
+      "description": "Return a machine-readable list of what evidence is required, what is currently missing or caller-attested only, and the exact caller/AUX actions needed before independent certification.",
+      "tags": [
+        "certification",
+        "evidence",
+        "next-action"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ],
+      "examples": [
+        "What is still required before AUX can independently certify this transaction?"
+      ]
+    }
+  ],
+  "url": "https://api.aux.prdictionedge.ai/a2a/v1",
+  "protocolVersion": "1.0"
+}

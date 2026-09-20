@@ -1,0 +1,31 @@
+generated: '2026-09-19'
+method: searched
+source: https://aux.prdictionedge.ai/agents/quickstart
+name: counterparty-check.mjs
+summary: >-
+  AUX ships no installed CLI binary; its command-line surface is a single-file, zero-dependency Node.js script fetched from the
+  docs host and run with node. It drives the public counterparty check end to end (durable attempt -> poll -> verify receipt).
+  Package details: packages/prdictionedge-ai-packages.yml.
+install:
+- method: curl
+  command: curl -fsS https://aux.prdictionedge.ai/examples/counterparty-check.mjs -o counterparty-check.mjs
+  requires: Node.js 18+
+commands:
+- command: node counterparty-check.mjs
+  flags:
+  - --name         # exact legal entity name as registered in GLEIF (required)
+  - --lei          # Legal Entity Identifier (optional, strongly preferred)
+  - --line         # registered street address line (repeatable)
+  - --city
+  - --region       # e.g. US-CA
+  - --country      # ISO country code
+  - --postal-code
+  operations: [createCertificationAttempt, getCertificationAttempt, verifyAuxCertification]
+  output: certification state (CERTIFIED / REQUIREMENTS_OUTSTANDING / NOT_CERTIFIABLE / SOURCE_TEMPORARILY_UNAVAILABLE), receipt verification VALID/INVALID, outstanding requirements, evidence sources, limitations
+key_flows:
+- name: Public counterparty check (published example)
+  command: >-
+    node counterparty-check.mjs --name "Apple Inc." --lei "HWUPKR0MPOU8FGXBT394" --line "C/O C T Corporation System"
+    --line "330 N. Brand Blvd" --line "Suite 700" --city "Glendale" --region "US-CA" --country "US" --postal-code "91203"
+  expected: CERTIFIED and Receipt verification VALID (provider's stated expectation; live result is authoritative)
+  docs: https://aux.prdictionedge.ai/examples/public-counterparty-check

@@ -1,18 +1,100 @@
 aid: prdictionedge-ai
 name: AUX by PrdictionEdge
-description: 'AUX by PrdictionEdge is a company surfaced via the API Evangelist harvest backlog (source:
-  a2a-registry) and added to the network as a stub for full-pipeline profiling.'
+description: >-
+  AUX by PrdictionEdge is a machine-native, non-executing pre-action trust layer for AI agents: before an
+  agent onboards, contracts with or pays a business counterparty, AUX independently resolves live GLEIF
+  legal-entity evidence, bounded exact-name OFAC screening and IANA RDAP domain identity, verifies signed
+  private-source attestations, and returns ES256-signed certification receipts that any downstream system
+  can verify offline against a published JWKS. The public counterparty check needs no account, API key or
+  payment. The surface is published as OpenAPI 3.1, an A2A 1.0 JSON-RPC agent with a well-known Agent Card,
+  an ARD manifest and llms.txt. PrdictionEdge (Chino Hills, California; founder John Bruner) has refocused
+  its public work entirely on AUX.
 url: https://raw.githubusercontent.com/api-evangelist/prdictionedge-ai/refs/heads/main/apis.yml
+image: https://aux.prdictionedge.ai/og.png
 x-type: company
 x-source: harvest:a2a-registry
-x-tier: stub
-x-tier-reason: harvest
+x-tier: profiled
+x-tier-reason: enrichment pass 2026-09-19 found a live OpenAPI, A2A agent + card, llms.txt and ARD manifest
 specificationVersion: '0.20'
 created: '2026-09-19'
 modified: '2026-09-19'
 tags:
 - Company
-apis: []
+- Counterparty Verification
+- Sanctions Screening
+- Legal Entity Identifier
+- Know Your Business
+- Agent Infrastructure
+- Trust and Safety
+- Signed Receipts
+- Agentic Payments
+- A2A
+- agent-native
+apis:
+- name: AUX Evidence and Certification API
+  description: >-
+    REST API (23 operations, OpenAPI 3.1) for durable business-counterparty certification attempts, evidence
+    resolution (GLEIF business identity, OFAC sanctions, RDAP domain identity, private-source attestations),
+    certification profiles and requirements, signed-receipt verification, downstream policy checks, and signed
+    non-executing agent-to-agent handoffs with single-use consumption. Public profiles need no API key; the
+    handoff-consumption endpoint authenticates the recipient with a domain-published ES256 JWS assertion.
+  image: https://aux.prdictionedge.ai/og.png
+  humanURL: https://aux.prdictionedge.ai/agents
+  baseURL: https://api.aux.prdictionedge.ai
+  tags:
+  - Counterparty Verification
+  - Sanctions Screening
+  - Legal Entity Identifier
+  - Know Your Business
+  - Signed Receipts
+  - Agent Infrastructure
+  properties:
+  - type: OpenAPI
+    url: openapi/prdictionedge-ai-openapi.yml
+  - type: OpenAPI
+    name: Provider-hosted OpenAPI 3.1 (verbatim source of the local copy)
+    url: https://api.aux.prdictionedge.ai/openapi.json
+  - type: Documentation
+    url: https://aux.prdictionedge.ai/agents
+  - type: APIReference
+    url: https://api.aux.prdictionedge.ai/
+  - type: GettingStarted
+    url: https://aux.prdictionedge.ai/agents/quickstart
+  - type: Authentication
+    url: authentication/prdictionedge-ai-authentication.yml
+  - type: Conventions
+    url: conventions/prdictionedge-ai-conventions.yml
+  - type: ErrorCatalog
+    url: errors/prdictionedge-ai-problem-types.yml
+  - type: DataModel
+    url: data-model/prdictionedge-ai-data-model.yml
+  - type: Overlay
+    url: overlays/prdictionedge-ai-openapi-overlay.yaml
+  - type: Sandbox
+    url: sandbox/prdictionedge-ai-sandbox.yml
+  - type: MCPServer
+    url: mcp/prdictionedge-ai-mcp.yml
+  - type: ToolCrosswalk
+    url: mcp/prdictionedge-ai-tool-crosswalk.yml
+- name: AUX A2A Agent (JSON-RPC)
+  description: >-
+    A2A 1.0 JSON-RPC interface for the AUX Evidence and Certification agent, exposing twelve bounded skills
+    (business identity evidence, OFAC sanctions evidence, domain identity evidence, source attestation,
+    certification profiles, durable attempts, certification, policy checks, certified handoffs, handoff
+    consumption and certification requirements). Discovered through the Agent Card at
+    /.well-known/agent-card.json on the API host; the endpoint answers JSON-RPC with A2A error codes.
+  image: https://aux.prdictionedge.ai/og.png
+  humanURL: https://aux.prdictionedge.ai/agents
+  baseURL: https://api.aux.prdictionedge.ai/a2a/v1
+  tags:
+  - A2A
+  - Agent Infrastructure
+  - Counterparty Verification
+  properties:
+  - type: AgentCard
+    url: a2a/prdictionedge-ai-a2a.yml
+  - type: Documentation
+    url: https://aux.prdictionedge.ai/agenticness
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -21,3 +103,70 @@ maintainers:
 common:
 - type: Website
   url: https://prdictionedge.ai/
+- type: DeveloperPortal
+  url: https://aux.prdictionedge.ai/agents
+- type: Documentation
+  url: https://aux.prdictionedge.ai/agents
+- type: APIReference
+  url: https://api.aux.prdictionedge.ai/
+- type: GettingStarted
+  url: https://aux.prdictionedge.ai/agents/quickstart
+- type: Roadmap
+  url: https://aux.prdictionedge.ai/roadmap
+- type: Support
+  url: https://aux.prdictionedge.ai/demo?product=aux
+- type: Blog
+  url: https://aux.prdictionedge.ai/news/agentic-payments-owner-control
+- type: TermsOfService
+  url: https://aux.prdictionedge.ai/terms
+- type: PrivacyPolicy
+  url: https://aux.prdictionedge.ai/privacy
+- type: AgentCard
+  url: a2a/prdictionedge-ai-a2a.yml
+- type: LLMsTxt
+  url: llms/prdictionedge-ai-llms.txt
+- type: WellKnown
+  url: well-known/prdictionedge-ai-well-known.yml
+- type: MCPServer
+  url: mcp/prdictionedge-ai-mcp.yml
+- type: ToolCrosswalk
+  url: mcp/prdictionedge-ai-tool-crosswalk.yml
+- type: Packages
+  url: packages/prdictionedge-ai-packages.yml
+- type: SDKs
+  url: packages/prdictionedge-ai-packages.yml
+- type: CLI
+  url: cli/prdictionedge-ai-cli.yml
+- type: Authentication
+  url: authentication/prdictionedge-ai-authentication.yml
+- type: Conventions
+  url: conventions/prdictionedge-ai-conventions.yml
+- type: Idempotency
+  url: conventions/prdictionedge-ai-conventions.yml
+- type: ErrorCatalog
+  url: errors/prdictionedge-ai-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/prdictionedge-ai-lifecycle.yml
+- type: Conformance
+  url: conformance/prdictionedge-ai-conformance.yml
+- type: DomainSecurity
+  url: security/prdictionedge-ai-domain-security.yml
+- type: Sandbox
+  url: sandbox/prdictionedge-ai-sandbox.yml
+- type: DataModel
+  url: data-model/prdictionedge-ai-data-model.yml
+- type: Overlay
+  url: overlays/prdictionedge-ai-openapi-overlay.yaml
+- type: Plans
+  url: plans/prdictionedge-ai-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/prdictionedge-ai-rate-limits.yml
+- type: RegulatoryPosture
+  url: regulatory/prdictionedge-ai-regulatory-posture.yml
+- type: AgentSkill
+  url: skills/_index.yml
+x-enrichment:
+  date: '2026-09-19'
+  status: enriched
+  artifacts_added: 34
+  pass: local-v3

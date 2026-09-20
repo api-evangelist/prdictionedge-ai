@@ -1,0 +1,22 @@
+{
+  "keys": [
+    {
+      "kty": "EC",
+      "x": "hOeGbahXlnwjHf27iWDPhuI1CPF8P8kU1z6pjpzfWdo",
+      "y": "em23pLzUkv9uTQ9KLqs7pt8HOuWu7NFMoP5HPusaQR0",
+      "crv": "P-256",
+      "use": "sig",
+      "alg": "ES256",
+      "kid": "aux-receipt-2026-08-17-03"
+    },
+    {
+      "kty": "EC",
+      "x": "H_Tw1p1l4-bo_oxlYK7kosPFQkzT4gz2VmUxgY6-aR4",
+      "y": "p4XUhPOW0i3U_yNOaILri1fWofaDm0c6uT3f5t1iojE",
+      "crv": "P-256",
+      "use": "sig",
+      "alg": "ES256",
+      "kid": "aux-receipt-2026-08-17-01"
+    }
+  ]
+}

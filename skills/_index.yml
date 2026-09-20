@@ -1,0 +1,20 @@
+generated: '2026-09-19'
+method: generated
+api: openapi/prdictionedge-ai-openapi.yml
+note: >-
+  No provider-published skills or AGENTS.md were found (searched aux.prdictionedge.ai, api.aux.prdictionedge.ai, llms.txt, the
+  MarketPulsePro README). These three skills are generated from the OpenAPI operationIds and the provider's own quickstart,
+  roadmap prompts and machine contracts; every operationId below exists in the spec.
+skills:
+- file: prdictionedge-ai-public-counterparty-check.md
+  name: Run a public business counterparty check
+  api: openapi/prdictionedge-ai-openapi.yml
+  operations: [getCertificationProfiles, getCertificationRequirements, evaluateCertificationRequirements, createCertificationAttempt, getCertificationAttempt, verifyAuxCertification]
+- file: prdictionedge-ai-verify-and-policy-check-a-certification.md
+  name: Verify an AUX certification and apply an acceptance policy
+  api: openapi/prdictionedge-ai-openapi.yml
+  operations: [verifyAuxCertification, getAuxCertificationPolicyContract, checkAuxCertificationPolicy, getAuxDomainCertificationPolicyContract, checkAuxCertificationAgainstDomainPolicy]
+- file: prdictionedge-ai-certified-agent-handoff.md
+  name: Hand a certification to another agent and consume it once
+  api: openapi/prdictionedge-ai-openapi.yml
+  operations: [createAuxCertificationHandoff, verifyAuxCertificationHandoff, getAuxHandoffConsumptionContract, consumeAuxCertificationHandoff, verifyAuxHandoffConsumptionReceipt]

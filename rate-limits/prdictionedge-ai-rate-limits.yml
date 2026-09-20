@@ -1,0 +1,27 @@
+generated: '2026-09-19'
+method: probed
+source: https://api.aux.prdictionedge.ai/api/health
+checked: '2026-09-19'
+summary: >-
+  No rate limits are documented anywhere on the AUX docs host, in the OpenAPI, or in the machine manifests. The only signal that a
+  limiter exists is /api/health, which reports abuse_limiter_present true and abuse_limiter_loaded true; the thresholds, window and
+  scope are unpublished. A live unauthenticated GET /v1/certification-profiles (HTTP 200) returned no RateLimit-*, X-RateLimit-* or
+  Retry-After header, and no 429 was observed. The provider's own throttling advice is structural rather than numeric: use the
+  durable-attempt endpoint and poll status_url instead of resubmitting, and respect the server-side backoff schedule.
+limit_count: 0
+documented: false
+scopes: []
+headers:
+  observed: []
+  probe:
+    url: https://api.aux.prdictionedge.ai/v1/certification-profiles
+    status: 200
+    headers_seen: [date, content-type, content-length, access-control-allow-origin, cache-control, access-control-allow-headers, access-control-allow-methods, report-to, nel, server, cf-ray, alt-svc]
+status_on_exhaustion: null
+retry_after: null
+server_side_backoff:
+  applies_to: durable certification attempts retrying SOURCE_TEMPORARILY_UNAVAILABLE
+  schedule_seconds: [60, 300, 900, 1800, 3600]
+  max_active_hours: 24
+  source: https://aux.prdictionedge.ai/.well-known/aux.json
+edge: "Cloudflare (server header cloudflare) in front of a Vercel-hosted origin"

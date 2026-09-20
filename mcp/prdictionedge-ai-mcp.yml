@@ -1,0 +1,81 @@
+generated: '2026-09-19'
+method: searched
+status: candidate
+source: https://api.aux.prdictionedge.ai/mcp-tool.json
+note: >-
+  AUX publishes an MCP tool DESCRIPTOR, not an MCP server. The descriptor at /mcp-tool.json (saved verbatim as
+  mcp/prdictionedge-ai-mcp-tool.json) opens with status "descriptor-only-not-an-mcp-transport" and maps eleven named
+  tools to REST endpoints. tools/list POSTs to /mcp, /mcp/v1 and /v1/mcp on api.aux.prdictionedge.ai all return the
+  API's JSON 404; /mcp and /mcp/v1 on aux.prdictionedge.ai return the Next.js HTML 404; mcp.prdictionedge.ai and
+  mcp.aux.prdictionedge.ai do not resolve. An earlier public README (github.com/MarketPulsePro/aux-transaction-preflight)
+  advertised "Remote MCP endpoint: https://aux.prdictionedge.ai/mcp/v1" and /mcp-server.json — both 404 today, so that
+  surface has been retired. The tool list below is therefore the provider's own descriptor (names, descriptions,
+  endpoints are theirs), recorded as a candidate because nobody ships a transport for it.
+deployment:
+  mode: none
+  endpoint: ''
+  install: ''
+  package: ''
+  auth: none
+  verified: probed
+  probes:
+  - url: https://api.aux.prdictionedge.ai/mcp-tool.json
+    method: GET
+    status: 200
+    note: descriptor; self-declared not a transport
+  - url: https://api.aux.prdictionedge.ai/mcp
+    method: POST tools/list
+    status: 404
+  - url: https://api.aux.prdictionedge.ai/mcp/v1
+    method: POST tools/list
+    status: 404
+  - url: https://api.aux.prdictionedge.ai/v1/mcp
+    method: POST tools/list
+    status: 404
+  - url: https://aux.prdictionedge.ai/mcp/v1
+    method: POST tools/list
+    status: 404
+  - url: https://aux.prdictionedge.ai/mcp-server.json
+    method: GET
+    status: 404
+server:
+  name: aux_evidence_certification
+  title: AUX Evidence and Certification
+  transport: none
+  url: ''
+  descriptor: mcp/prdictionedge-ai-mcp-tool.json
+  descriptor_url: https://api.aux.prdictionedge.ai/mcp-tool.json
+tools:
+- name: aux_certification_profiles
+  description: Discover live AUX certification profiles and select the bounded consequential-action contract before submitting evidence.
+  source_operation: openapi/prdictionedge-ai-openapi.yml#getCertificationProfiles
+- name: aux_certification_attempt
+  description: Create or reuse a deterministic durable certification attempt. AUX automatically retries SOURCE_TEMPORARILY_UNAVAILABLE with bounded backoff and exposes a polling status URL.
+  source_operation: openapi/prdictionedge-ai-openapi.yml#createCertificationAttempt
+- name: aux_sanctions_evidence
+  description: Resolve bounded official OFAC name-screening evidence directly from Treasury source files.
+  source_operation: openapi/prdictionedge-ai-openapi.yml#resolveSanctionsEvidence
+- name: aux_domain_identity_evidence
+  description: Resolve registered-domain identity using IANA RDAP plus HTTPS domain-control evidence.
+  source_operation: openapi/prdictionedge-ai-openapi.yml#resolveDomainIdentityEvidence
+- name: aux_source_attestation
+  description: Resolve a private evidence source's published trust document and verify its signed attestation before AUX applies it to certification.
+  source_operation: openapi/prdictionedge-ai-openapi.yml#verifySourceAttestation
+- name: aux_business_identity_evidence
+  description: Independently resolve a legal entity against live GLEIF data and return a signed evidence bundle when the identity is exact and current.
+  source_operation: openapi/prdictionedge-ai-openapi.yml#resolveBusinessIdentityEvidence
+- name: aux_evidence_verify
+  description: Verify an AUX signed evidence bundle and its integrity commitments.
+  source_operation: openapi/prdictionedge-ai-openapi.yml#verifyAuxEvidence
+- name: aux_certification_policy_check
+  description: Verify a portable AUX certification and apply a downstream consumer policy without executing the underlying action.
+  source_operation: openapi/prdictionedge-ai-openapi.yml#checkAuxCertificationPolicy
+- name: aux_domain_certification_policy_check
+  description: Resolve a consumer's published AUX acceptance policy from its HTTPS domain and evaluate a signed AUX certification.
+  source_operation: openapi/prdictionedge-ai-openapi.yml#checkAuxCertificationAgainstDomainPolicy
+- name: aux_certified_agent_handoff
+  description: Create a signed non-executing agent-to-agent handoff only after the recipient domain's independently resolved policy accepts a valid AUX certification.
+  source_operation: openapi/prdictionedge-ai-openapi.yml#createAuxCertificationHandoff
+- name: aux_handoff_consumption
+  description: Authenticate the intended recipient, atomically consume a verified handoff once, and return a signed receipt with action_executed=false.
+  source_operation: openapi/prdictionedge-ai-openapi.yml#consumeAuxCertificationHandoff

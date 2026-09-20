@@ -1,0 +1,42 @@
+# AUX by PrdictionEdge
+
+AUX is a production, machine-native pre-action business counterparty evidence and certification service for AI agents.
+
+## Recommended first use
+
+Verify a public business counterparty before onboarding, payment, procurement, or another consequential action. The recommended profile is `counterparty_registry_pre_action`.
+
+Required caller inputs:
+
+- Exact legal entity name
+- Complete legal address as registered in GLEIF
+- ISO country code
+- LEI when available (optional but strongly preferred)
+
+AUX resolves live GLEIF legal-entity evidence and bounded exact normalized primary/alias name screening against the official OFAC source files used by AUX. It issues a signed certification only when every requirement is satisfied.
+
+Possible terminal states:
+
+- CERTIFIED
+- REQUIREMENTS_OUTSTANDING
+- NOT_CERTIFIABLE
+- SOURCE_TEMPORARILY_UNAVAILABLE
+
+A certification is bounded to its named requirements and limitations. It is not fuzzy or ownership-based screening, comprehensive sanctions clearance, legal advice, or permission to execute an action.
+
+## Start here
+
+- Working real-company example: https://aux.prdictionedge.ai/examples/public-counterparty-check
+- Quickstart: https://aux.prdictionedge.ai/agents/quickstart
+- Agentic capability evidence: https://aux.prdictionedge.ai/agenticness
+- Guidance for owners of payment-capable agents: https://aux.prdictionedge.ai/news/agentic-payments-owner-control
+- Runnable zero-dependency Node.js client: https://aux.prdictionedge.ai/examples/counterparty-check.mjs
+- Certification profiles: https://api.aux.prdictionedge.ai/v1/certification-profiles
+- Durable attempts: https://api.aux.prdictionedge.ai/v1/certification-attempts
+- Receipt verification: https://api.aux.prdictionedge.ai/v1/certifications/verify
+- OpenAPI: https://api.aux.prdictionedge.ai/openapi.json
+- A2A Agent Card: https://api.aux.prdictionedge.ai/.well-known/agent-card.json
+- A2A JSON-RPC: https://api.aux.prdictionedge.ai/a2a/v1
+- ARD manifest: https://aux.prdictionedge.ai/.well-known/ard.json
+
+No account, API key, payment, or package installation is required for the public counterparty check.

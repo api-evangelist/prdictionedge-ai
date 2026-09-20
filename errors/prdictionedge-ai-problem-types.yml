@@ -1,0 +1,105 @@
+generated: '2026-09-19'
+method: derived
+source: >-
+  4xx/5xx responses declared in openapi/prdictionedge-ai-openapi.yml (descriptions are the spec's own text), the outcome vocabularies
+  in the GET contracts on /v1/certifications/policy-check and /v1/certification-handoffs/consume, and error bodies observed on live
+  unauthenticated requests on 2026-09-19.
+format: json-error-code
+envelope:
+  content_type: application/json; charset=utf-8
+  shape: '{"error": "<snake_case_code>"}'
+  optional_fields:
+    required: array of missing field paths on 400 invalid_request
+    retryable: boolean on 503
+    action_executed: always false — AUX never executes the downstream action
+    documentation: URL of the API index on 404
+    allow: allowed method on 405
+  rfc9457: false
+observed:
+- status: 400
+  code: invalid_request
+  body: '{"error":"invalid_request","required":["evidence.receipt"]}'
+  request: POST /v1/evidence/verify with {}
+- status: 404
+  code: not_found
+  body: '{"error":"not_found","documentation":"https://api.aux.prdictionedge.ai/"}'
+  request: GET /docs
+- status: 405
+  code: method_not_allowed
+  body: '{"error":"method_not_allowed","allow":"POST"}'
+  request: GET /v1/receipts/verify
+- status: 503
+  code: handoff_consumption_key_unavailable
+  body: '{"error":"handoff_consumption_key_unavailable","retryable":true,"action_executed":false}'
+  request: POST /v1/certification-handoffs/consume with {}
+problem_types:
+- status: 400
+  title: Invalid request
+  operations: [resolveSanctionsEvidence, resolveDomainIdentityEvidence, resolveBusinessIdentityEvidence, verifyAuxEvidence, verifyAuxCertification, checkAuxCertificationPolicy, verifyAuxCertificationHandoff, verifyAuxHandoffConsumptionReceipt, evaluateCertificationRequirements, getCertificationAttempt]
+  detail: Malformed JSON, missing required fields (listed in `required`), invalid policy, invalid consumer domain, or an attempt_id not matching ^auxattempt_[a-f0-9]{32}$.
+  remediation: Fix the listed fields and resend; not retryable as-is.
+- status: 400
+  title: Invalid or unverifiable source attestation
+  operations: [verifySourceAttestation]
+  remediation: The source system must re-issue a JWS whose signature, freshness, subject and transaction binding verify against its published trust document.
+- status: 400
+  title: Invalid handoff input
+  operations: [createAuxCertificationHandoff]
+  remediation: handoff.expires_at must be in the future and no more than 24 hours out; all six handoff fields are required (max 256 chars each).
+- status: 401
+  title: Recipient authentication or binding failed
+  outcome: RECIPIENT_AUTHENTICATION_FAILED
+  operations: [consumeAuxCertificationHandoff]
+  remediation: Re-sign the consumer_assertion (ES256, typ AUX-HANDOFF-CONSUMER+JSON, <= 300 s lifetime) with the key published at https://{recipient_domain}/.well-known/aux-handoff-consumer.json and bind it to this exact handoff_sha256.
+- status: 404
+  title: Unknown profile id
+  operations: [getCertificationProfiles]
+  remediation: Use a live profile_id from GET /v1/certification-profiles; shadow profiles are not discoverable.
+- status: 404
+  title: Attempt not found or expired
+  operations: [getCertificationAttempt]
+  remediation: Terminal results are deleted 24 h after the attempt reaches a terminal state; recreate the attempt if still needed.
+- status: 409
+  title: NOT_CERTIFIABLE — adverse independently verified evidence
+  outcome: NOT_CERTIFIABLE
+  operations: [certifyTransaction]
+  remediation: Not retryable. Adverse evidence (for example an exact OFAC name match or an inactive GLEIF status) blocks certification; escalate to a human per the owner's policy.
+- status: 409
+  title: Recipient policy rejected the certification; no handoff receipt issued
+  operations: [createAuxCertificationHandoff]
+  remediation: The recipient domain's published acceptance policy rejected the certification (profile/version/age/requirements); obtain a certification that satisfies that policy.
+- status: 409
+  title: ALREADY_CONSUMED — no second success
+  outcome: ALREADY_CONSUMED
+  operations: [consumeAuxCertificationHandoff]
+  remediation: Single-use enforcement; the handoff has already been accepted once. Do not retry.
+- status: 422
+  title: REQUIREMENTS_OUTSTANDING — caller/actionable evidence gaps
+  outcome: REQUIREMENTS_OUTSTANDING
+  operations: [certifyTransaction, createCertificationAttempt]
+  remediation: Call POST /v1/certification-requirements for the profile-specific gap list and exact next action, supply the missing caller data or attestations, then resubmit.
+- status: 422
+  title: Source trust is not configured; caller action required
+  operations: [verifySourceAttestation]
+  remediation: The private source must publish its AUX trust document before its attestations can be accepted.
+- status: 422
+  title: Consumer policy not configured or invalid
+  operations: [checkAuxCertificationAgainstDomainPolicy, createAuxCertificationHandoff]
+  remediation: The consumer/recipient domain must publish a valid AUX acceptance policy.
+- status: 422
+  title: Invalid or expired handoff
+  outcome: INVALID_HANDOFF
+  operations: [consumeAuxCertificationHandoff]
+- status: 503
+  title: SOURCE_TEMPORARILY_UNAVAILABLE — no certification decision made
+  outcome: SOURCE_TEMPORARILY_UNAVAILABLE
+  operations: [certifyTransaction, resolveSanctionsEvidence, resolveBusinessIdentityEvidence, resolveDomainIdentityEvidence, verifySourceAttestation, checkAuxCertificationAgainstDomainPolicy, createAuxCertificationHandoff]
+  retryable: true
+  remediation: Never treat as approval. Prefer POST /v1/certification-attempts, where AUX owns the retry (backoff 60/300/900/1800/3600 s for up to 24 h) and exposes a status_url to poll.
+- status: 503
+  title: Durable attempt store / trust, storage, HMAC or signing capability unavailable
+  operations: [createCertificationAttempt, consumeAuxCertificationHandoff]
+  retryable: true
+policy_check_outcomes: [ACCEPT, REJECT, INVALID_RECEIPT]
+consumption_outcomes: [CONSUMED_ONCE, ALREADY_CONSUMED, INVALID_HANDOFF, RECIPIENT_AUTHENTICATION_FAILED]
+certification_states: [CERTIFIED, REQUIREMENTS_OUTSTANDING, NOT_CERTIFIABLE, SOURCE_TEMPORARILY_UNAVAILABLE]

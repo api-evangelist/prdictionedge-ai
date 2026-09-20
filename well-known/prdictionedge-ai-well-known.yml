@@ -1,0 +1,141 @@
+generated: '2026-09-19'
+method: probed
+source: live GET probes on every host the record knows (apex, www, docs host aux., API/A2A host api.aux.) on 2026-09-19
+note: >-
+  Real hits: the A2A agent card (canonical path on api.aux + aux + www; legacy path on aux + www), the ARD manifest
+  (/.well-known/ard.json, also mirrored at /.well-known/ai-catalog.json) and the AUX production manifest
+  (/.well-known/aux.json) on the docs host, and the receipt-signing JWKS on the API host. No security.txt,
+  openid-configuration, oauth-authorization-server, oauth-protected-resource, api-catalog, ai-plugin.json, mcp.json
+  or aauth-resource.json on any host. There is no MCP host (mcp.prdictionedge.ai and mcp.aux.prdictionedge.ai do not
+  resolve) and no discovery document names an authorization server, so no third host was probed. The apex
+  prdictionedge.ai 307s every path to www.prdictionedge.ai; a 404 on the Next.js hosts is an HTML error page (20,293
+  bytes, same body as a random control path) and a 404 on the API host is a JSON body ({"error":"not_found"}), so
+  every 200 recorded below is a served document, not a catch-all shell.
+hosts:
+- host: prdictionedge.ai
+  note: Apex; every /.well-known/* path returns 307 to the same path on www.prdictionedge.ai.
+  documents:
+  - path: /.well-known/agent-card.json
+    status: 307
+    redirect: https://www.prdictionedge.ai/.well-known/agent-card.json
+  - path: /.well-known/security.txt
+    status: 307
+  - path: /.well-known/openid-configuration
+    status: 307
+  - path: /.well-known/oauth-authorization-server
+    status: 307
+  - path: /.well-known/oauth-protected-resource
+    status: 307
+  - path: /.well-known/api-catalog
+    status: 307
+  - path: /.well-known/ai-plugin.json
+    status: 307
+- host: www.prdictionedge.ai
+  documents:
+  - path: /.well-known/agent-card.json
+    status: 200
+    content_type: application/a2a+json; charset=utf-8
+    file: prdictionedge-ai-aux-agent-card.json
+    note: Identical body to the aux.prdictionedge.ai copy.
+  - path: /.well-known/agent.json
+    status: 200
+    content_type: application/json; charset=utf-8
+    file: prdictionedge-ai-aux-agent.json
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/mcp.json
+    status: 404
+  - path: /security.txt
+    status: 404
+- host: aux.prdictionedge.ai
+  documents:
+  - path: /.well-known/agent-card.json
+    status: 200
+    content_type: application/a2a+json; charset=utf-8
+    file: prdictionedge-ai-aux-agent-card.json
+  - path: /.well-known/agent.json
+    status: 200
+    content_type: application/json; charset=utf-8
+    file: prdictionedge-ai-aux-agent.json
+    note: Legacy A2A path; adds top-level url and protocolVersion "1.0" to the canonical card.
+  - path: /.well-known/ard.json
+    status: 200
+    content_type: application/json; charset=utf-8
+    file: prdictionedge-ai-aux-ard.json
+    note: Agent Resource Discovery manifest (specVersion 1.0) listing the A2A card, the OpenAPI and the quickstart.
+  - path: /.well-known/ai-catalog.json
+    status: 200
+    content_type: application/json; charset=utf-8
+    file: prdictionedge-ai-aux-ard.json
+    note: Byte-identical to /.well-known/ard.json.
+  - path: /.well-known/aux.json
+    status: 200
+    content_type: application/json; charset=utf-8
+    file: prdictionedge-ai-aux-aux.json
+    note: AUX production manifest (manifest_version aux-production-1.0) — endpoints, certification profiles, retry/retention windows, access terms.
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/mcp.json
+    status: 404
+  - path: /.well-known/aauth-resource.json
+    status: 404
+  - path: /.well-known/aux
+    status: 404
+  - path: /security.txt
+    status: 404
+- host: api.aux.prdictionedge.ai
+  documents:
+  - path: /.well-known/agent-card.json
+    status: 200
+    content_type: application/json; charset=utf-8
+    file: prdictionedge-ai-api-agent-card.json
+    note: Canonical A2A card; the URL the provider names in llms.txt, ard.json, aux.json and the API index.
+  - path: /.well-known/jwks.json
+    status: 200
+    content_type: application/json; charset=utf-8
+    file: prdictionedge-ai-api-jwks.json
+    note: Two EC P-256 ES256 signing keys (kids aux-receipt-2026-08-17-01 and -03) used to verify certification receipts.
+  - path: /.well-known/agent.json
+    status: 404
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/ai-catalog.json
+    status: 404
+  - path: /.well-known/ard.json
+    status: 404
+  - path: /.well-known/mcp.json
+    status: 404
+  - path: /.well-known/aauth-resource.json
+    status: 404
+  - path: /security.txt
+    status: 404

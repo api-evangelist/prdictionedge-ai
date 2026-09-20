@@ -1,0 +1,55 @@
+generated: '2026-09-19'
+method: searched
+source: https://aux.prdictionedge.ai/agents/quickstart
+docs: https://aux.prdictionedge.ai/agents
+openapi: openapi/prdictionedge-ai-openapi.yml
+summary: >-
+  The AUX Evidence and Certification API is public: the OpenAPI declares no securitySchemes and no top-level
+  security, and the provider states in llms.txt, aux.json (access.public_counterparty_profile) and the quickstart
+  that "no account, API key, payment, or package installation is required for the public counterparty check". Every
+  operation was reachable anonymously in this pass (public GETs returned 200; POSTs with empty bodies returned the
+  API's 400 validation envelope, not 401). The single authenticated operation is handoff consumption, which
+  authenticates the RECIPIENT with a short-lived ES256 JWS assertion verified against a key the recipient publishes
+  on its own domain — a domain-anchored, key-based scheme rather than an API key or OAuth. Trust in the opposite
+  direction (agent verifying AUX) is by ES256 receipt signatures against the published JWKS.
+schemes:
+- id: public
+  type: none
+  applies_to: all operations except consumeAuxCertificationHandoff
+  detail: No credential of any kind; CORS is open (access-control-allow-origin *). An abuse limiter is present per /api/health but no limits are published.
+- id: recipient-domain-jws
+  type: http
+  scheme: signed-assertion
+  applies_to: [consumeAuxCertificationHandoff]
+  location: request body field consumer_assertion.jws (not an Authorization header)
+  format: JWS Compact Serialization
+  algorithm: ES256
+  typ: AUX-HANDOFF-CONSUMER+JSON
+  max_lifetime_seconds: 300
+  key_discovery: https://{recipient_domain}/.well-known/aux-handoff-consumer.json
+  signed_fields: [schema, issuer, subject, audience, recipient_domain, recipient_agent_id, handoff_id, handoff_sha256, intended_action, jti, issued_at, expires_at]
+  failure: 401 "Recipient authentication or binding failed" (outcome RECIPIENT_AUTHENTICATION_FAILED)
+  docs: https://api.aux.prdictionedge.ai/v1/certification-handoffs/consume
+  note: Documented by the machine-readable contract the GET on the same path returns (consumption_version aux-handoff-consumption-0.1.0).
+- id: source-attestation-jws
+  type: http
+  scheme: signed-assertion
+  applies_to: [verifySourceAttestation, certifyTransaction, createCertificationAttempt]
+  location: request body source_attestations[].jws with source_domain
+  format: JWS signed by a private evidence source; AUX resolves the source domain's published trust document and key itself
+  docs: https://api.aux.prdictionedge.ai/v1/evidence/source-attestation
+  note: Not caller authentication — it authenticates third-party evidence the caller transports.
+receipt_verification:
+  algorithm: ES256
+  jwks: https://api.aux.prdictionedge.ai/.well-known/jwks.json
+  jwks_file: well-known/prdictionedge-ai-api-jwks.json
+  current_kid: aux-receipt-2026-08-17-03
+  verify_endpoints: [verifyAuxCertification, verifyAuxEvidence, verifyAuxCertificationHandoff, verifyAuxHandoffConsumptionReceipt]
+oauth2: false
+openid_connect: false
+api_key: false
+mutual_tls: false
+a2a_interface:
+  url: https://api.aux.prdictionedge.ai/a2a/v1
+  security_schemes: none declared in the agent card
+  version_header: A2A-Version 1.0 required (calls without it return JSON-RPC -32009 "Protocol version not supported")

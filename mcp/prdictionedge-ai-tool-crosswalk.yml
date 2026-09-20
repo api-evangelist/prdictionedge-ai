@@ -1,0 +1,111 @@
+generated: '2026-09-19'
+method: derived
+source: >-
+  Provider descriptor https://api.aux.prdictionedge.ai/mcp-tool.json (tool name -> endpoint) joined to the operationIds
+  in openapi/prdictionedge-ai-openapi.yml, plus the twelve A2A skills in a2a/prdictionedge-ai-agent-card.json.
+note: >-
+  There is no MCP transport (see mcp/prdictionedge-ai-mcp.yml) so the tool side of this crosswalk is the provider's
+  published descriptor, not a live tools/list. Because the descriptor names the backing endpoint for every tool, each
+  binding is exact and the tool inherits that operation's requestBody as its real input schema. The A2A skills are
+  mapped alongside because they are the agent surface that IS live.
+surfaces:
+  openapi: openapi/prdictionedge-ai-openapi.yml
+  mcp:
+    url: ''
+    descriptor: https://api.aux.prdictionedge.ai/mcp-tool.json
+    gated: false
+    note: descriptor only; no transport to call tools/list against
+  a2a:
+    url: https://api.aux.prdictionedge.ai/a2a/v1
+    card: a2a/prdictionedge-ai-agent-card.json
+    gated: false
+  graphql: null
+crosswalk:
+- tool: aux_certification_profiles
+  a2a_skill: aux-certification-profiles
+  category: discovery
+  rest: [getCertificationProfiles]
+  binding: rest
+  confidence: high
+- tool: aux_certification_attempt
+  a2a_skill: aux-certification-attempts
+  category: certification
+  rest: [createCertificationAttempt, getCertificationAttempt]
+  binding: rest
+  confidence: high
+  note: Descriptor names the POST endpoint and the status_template /v1/certification-attempts/{attempt_id}, so the tool fans out to create + poll.
+- tool: aux_sanctions_evidence
+  a2a_skill: aux-sanctions-evidence
+  category: evidence
+  rest: [resolveSanctionsEvidence]
+  binding: rest
+  confidence: high
+- tool: aux_domain_identity_evidence
+  a2a_skill: aux-domain-identity-evidence
+  category: evidence
+  rest: [resolveDomainIdentityEvidence]
+  binding: rest
+  confidence: high
+- tool: aux_source_attestation
+  a2a_skill: aux-source-attestation
+  category: evidence
+  rest: [verifySourceAttestation, getSourceAttestationContract]
+  binding: rest
+  confidence: high
+- tool: aux_business_identity_evidence
+  a2a_skill: aux-business-identity-evidence
+  category: evidence
+  rest: [resolveBusinessIdentityEvidence]
+  binding: rest
+  confidence: high
+- tool: aux_evidence_verify
+  a2a_skill: null
+  category: verification
+  rest: [verifyAuxEvidence]
+  binding: rest
+  confidence: high
+- tool: aux_certification_policy_check
+  a2a_skill: aux-certification-policy-check
+  category: policy
+  rest: [checkAuxCertificationPolicy, getAuxCertificationPolicyContract]
+  binding: rest
+  confidence: high
+- tool: aux_domain_certification_policy_check
+  a2a_skill: aux-domain-certification-policy-check
+  category: policy
+  rest: [checkAuxCertificationAgainstDomainPolicy, getAuxDomainCertificationPolicyContract]
+  binding: rest
+  confidence: high
+- tool: aux_certified_agent_handoff
+  a2a_skill: aux-certified-agent-handoff
+  category: handoff
+  rest: [createAuxCertificationHandoff, verifyAuxCertificationHandoff]
+  binding: rest
+  confidence: high
+- tool: aux_handoff_consumption
+  a2a_skill: aux-handoff-consumption
+  category: handoff
+  rest: [consumeAuxCertificationHandoff, verifyAuxHandoffConsumptionReceipt, getAuxHandoffConsumptionContract]
+  binding: rest
+  confidence: high
+mcp_only: []
+a2a_only:
+- skill: aux-certification
+  rest: [certifyTransaction]
+  reason: Synchronous certification is an A2A skill and a REST operation but is not listed as a descriptor tool (the descriptor points agents at the durable-attempt flow).
+- skill: aux-certification-requirements
+  rest: [getCertificationRequirements, evaluateCertificationRequirements]
+  reason: Listed in the descriptor as a top-level certificationRequirements block rather than in additional_tools.
+rest_only:
+- category: discovery
+  operations: [getA2AAgentCard]
+- category: certification
+  operations: [certifyTransaction, getCertificationRequirements, evaluateCertificationRequirements]
+coverage:
+  descriptor_tools_named: 11
+  descriptor_tools_bound: 11
+  mcp_only: 0
+  a2a_skills: 12
+  a2a_skills_bound: 12
+  rest_operations_total: 23
+  rest_operations_with_tool: 19

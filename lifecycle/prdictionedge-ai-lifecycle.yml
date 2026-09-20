@@ -1,0 +1,73 @@
+generated: '2026-09-19'
+method: searched
+source: https://aux.prdictionedge.ai/agenticness
+sources:
+- https://aux.prdictionedge.ai/agenticness  (reliability statement — no formal SLA or uptime percentage)
+- https://aux.prdictionedge.ai/roadmap  (phase status — Live / Deferred / Controlled shadow)
+- https://aux.prdictionedge.ai/.well-known/aux.json  (retention and retry windows)
+- https://api.aux.prdictionedge.ai/api/health  (contract version, readiness checks)
+- openapi/prdictionedge-ai-openapi.yml
+versioning:
+  scheme: uri-path
+  current: v1
+  contract_version: aux-preflight-0.2.0
+  readiness_version: aux-readiness-0.1.0
+  component_versions:
+    certification_profiles: aux-certification-profiles-0.1.0
+    certification_requirements: aux-certification-requirements-0.1.0
+    receipt_policy_check: aux-receipt-policy-check-0.1.0
+    handoff_consumption: aux-handoff-consumption-0.1.0
+    agent_card: 0.9.0
+    a2a_protocol: '1.0'
+  profile_versions:
+    vendor_payment_pre_action: 1.0.0 (default; backwards-compatible when profile_id is omitted)
+    counterparty_registry_pre_action: 0.1.0
+    counterparty_identity_pre_action: 0.1.0
+  docs: https://aux.prdictionedge.ai/agents
+  note: >-
+    Profiles are independently versioned and downstream consumer policies pin allowed_profiles[].versions, so a profile
+    version bump is the unit of change an integrator must track. No date-based or header-based API versioning.
+deprecation:
+  policy_url: null
+  sunset_header: false
+  deprecation_header: false
+  note: >-
+    No deprecation policy is published. The provider does state that the original vendor_payment_pre_action 1.0 behaviour
+    is preserved for callers that omit profile_id. An earlier synthetic "transaction preflight" surface (PROCEED/REVIEW/STOP
+    decisions, /v1/preflight) has been moved out of default discovery into the /lab laboratory rather than removed.
+sla:
+  url: https://aux.prdictionedge.ai/agenticness
+  uptime_target: null
+  statement: >-
+    "AUX does not publish a formal SLA or uptime percentage." Reliability is described as scheduled external production smoke
+    tests covering health, durable bindings, profiles, Agent Card, OpenAPI, retry and retention, public discovery,
+    example-client syntax, measurement intake and the synthetic-only boundary. Roadmap phase 6G promises privacy-safe service
+    levels, latency, failure rates and cost-per-use evidence "before any paid expansion".
+status_page: null
+health:
+  endpoint: https://api.aux.prdictionedge.ai/api/health
+  observed: status ok, 31 named readiness checks all true, price_usd 0 (2026-09-19)
+  status_json: https://api.aux.prdictionedge.ai/api/status
+  note: A machine health/readiness endpoint, not a human status page; no incident history is published.
+retention:
+  active_durable_attempt_max_hours: 24
+  terminal_status_retention_hours: 24
+  synchronous_request_bodies_stored: false
+  persistent_client_tracking: false
+  handoff_max_lifetime_hours: 24
+  consumer_assertion_max_lifetime_seconds: 300
+key_rotation:
+  jwks: https://api.aux.prdictionedge.ai/.well-known/jwks.json
+  current_kid: aux-receipt-2026-08-17-03
+  published_kids: [aux-receipt-2026-08-17-01, aux-receipt-2026-08-17-03]
+  note: Two dated ES256 keys are published; roadmap phase 6F promises domain-signed policies, key rotation, revocation and rollback-resistant policy verification.
+roadmap:
+  url: https://aux.prdictionedge.ai/roadmap
+  live: [1 requirements, 2 independent evidence, 2B durable attempts, 3 signed receipts, 5 multi-profile core, 6A-6C profiles/policy/handoff]
+  in_build: [6D single-use receipt consumption (endpoint live; "in build and security review")]
+  deferred: [4 adoption observation]
+  controlled_shadow: [5B clinical evidence-package integrity review]
+  planned: [6E consumer patterns, 6F policy authenticity, 6G reliability and economics]
+deprecated_operations: []
+changelog: null
+changelog_note: No dated changelog is published; the only dated item is the 2026-09-17 press release at https://aux.prdictionedge.ai/news/agentic-payments-owner-control.

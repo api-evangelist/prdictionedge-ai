@@ -1,0 +1,50 @@
+generated: '2026-09-19'
+method: searched
+probe: true
+source: https://aux.prdictionedge.ai/privacy
+signals:
+  subprocessors:
+    url: https://aux.prdictionedge.ai/privacy
+    section: '3. Third Parties'
+    dated: August 2026 (policy "Last updated")
+    entries:
+    - {vendor: Supabase, purpose: authentication and database hosting}
+    - {vendor: Stripe, purpose: payment processing}
+    - {vendor: Anthropic, purpose: AI-assisted classification and scoring}
+    - {vendor: Resend, purpose: transactional email}
+    - {vendor: Vercel, purpose: application hosting}
+    evidence:
+    - source: https://aux.prdictionedge.ai/privacy
+      http_status: 200
+      fetched: '2026-09-19'
+      quote: >-
+        "We use Supabase for authentication and database hosting, Stripe for payment processing, Anthropic for AI-assisted
+        classification and scoring, Resend for transactional email, and Vercel for application hosting."
+    note: >-
+      A named vendor list with purposes, inline in the privacy policy rather than a dedicated /legal/subprocessors page (404). The
+      policy states it "reflects PrdictionEdge.ai's current GovEdge and RegWatch services and is pending final attorney review" —
+      it is the company-level policy and does not name AUX, so whether these processors touch AUX data is not stated.
+probed_paths:
+- {url: https://aux.prdictionedge.ai/accessibility, status: 404}
+- {url: https://aux.prdictionedge.ai/legal/subprocessors, status: 404}
+- {url: https://aux.prdictionedge.ai/legal/dpa, status: 404}
+- {url: https://aux.prdictionedge.ai/security, status: 404}
+- {url: https://aux.prdictionedge.ai/.well-known/security.txt, status: 404}
+- {url: https://aux.prdictionedge.ai/privacy, status: 200}
+- {url: https://aux.prdictionedge.ai/terms, status: 200}
+notes:
+- >-
+  data_subject_request NOT recorded: the privacy policy says only "You may request deletion at any time by contacting us"
+  (legal@prdictionedge.ai) with no rights list, no response period and no intake page, which is the word rather than the substance.
+- >-
+  AUX itself publishes strong data-minimisation and retention statements for the API (no synchronous request bodies stored, active
+  attempts <= 24 h, terminal results <= 24 h, no persistent client tracking — https://api.aux.prdictionedge.ai/api/status) but these
+  are product retention facts, not a data-residency, DSR or incident-notification commitment, so no signal is set from them.
+- >-
+  ai_transparency NOT recorded: the agenticness page and aux.json describe what the AI agent surface does and does not do
+  (non-executing, intentionally_not_supported list), which is product capability disclosure, not an AI-use transparency statement
+  about AI-generated content or automated decision-making toward users.
+- >-
+  https://api.aux.prdictionedge.ai/robots.txt carries Cloudflare Content Signals preamble text (search / ai-input / ai-train) with no
+  values set; recorded under conformance/, not as a regulatory signal.
+- The Terms of Service (Aug 2026) likewise cover GovEdge and RegWatch, not AUX; no AUX-specific terms, DPA or SLA exist.

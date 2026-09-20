@@ -64,5 +64,11 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-AUX by PrdictionEdge is a company surfaced via the API Evangelist harvest backlog (source: a2a-registry) and added to the network as a stub for full-pipeline profiling.
-- https://prdictionedge.ai/
+AUX by PrdictionEdge is a machine-native, non-executing pre-action trust layer for AI agents: before an agent onboards, contracts with or pays a business counterparty, AUX independently resolves live GLEIF legal-entity evidence, bounded exact-name OFAC screening and IANA RDAP domain identity, verifies signed private-source attestations, and returns ES256-signed certification receipts that any downstream system can verify offline against a published JWKS. The public counterparty check needs no account, API key or payment.
+
+- Website: https://prdictionedge.ai/ (redirects to https://www.prdictionedge.ai/; docs at https://aux.prdictionedge.ai/agents)
+- OpenAPI 3.1 (23 operations): https://api.aux.prdictionedge.ai/openapi.json — local copy in `openapi/`
+- A2A Agent Card: https://api.aux.prdictionedge.ai/.well-known/agent-card.json — JSON-RPC at https://api.aux.prdictionedge.ai/a2a/v1 — graded in `a2a/`
+- llms.txt: https://aux.prdictionedge.ai/llms.txt · ARD manifest: https://aux.prdictionedge.ai/.well-known/ard.json · JWKS: https://api.aux.prdictionedge.ai/.well-known/jwks.json
+- MCP: descriptor only (`/mcp-tool.json` self-declares "not an MCP transport"); no server — see `mcp/`
+- Profiled 2026-09-19 (API Evangelist enrichment pass, local-v3).

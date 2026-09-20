@@ -1,0 +1,58 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "AUX by PrdictionEdge",
+    "identifier": "https://aux.prdictionedge.ai"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:aux.prdictionedge.ai:a2a:evidence-certification",
+      "displayName": "AUX Evidence and Certification",
+      "type": "application/a2a-agent-card+json",
+      "url": "https://api.aux.prdictionedge.ai/.well-known/agent-card.json",
+      "version": "0.9.0",
+      "description": "Independent pre-action business counterparty evidence and signed certification using live GLEIF registry data and bounded official OFAC exact-name screening.",
+      "capabilities": [
+        "BusinessCounterpartyVerification",
+        "GLEIFLegalEntityEvidence",
+        "OFACExactNameScreening",
+        "SignedCertificationVerification"
+      ],
+      "tags": ["counterparty", "vendor", "procurement", "GLEIF", "OFAC", "pre-action", "certification"],
+      "representativeQueries": [
+        "verify a business counterparty before payment",
+        "check a vendor legal entity against GLEIF and OFAC",
+        "obtain a signed counterparty certification receipt",
+        "verify an AUX counterparty certification before an agent acts"
+      ]
+    },
+    {
+      "identifier": "urn:air:aux.prdictionedge.ai:api:counterparty-certification",
+      "displayName": "AUX Counterparty Certification API",
+      "type": "application/vnd.oai.openapi+json",
+      "url": "https://api.aux.prdictionedge.ai/openapi.json",
+      "description": "REST API for durable counterparty certification attempts, evidence requirements, signed receipts, and receipt verification.",
+      "capabilities": ["CounterpartyCertification", "DurableEvidenceRetry", "ReceiptVerification"],
+      "tags": ["openapi", "counterparty", "vendor-risk", "agent-tools"],
+      "representativeQueries": [
+        "API to verify a company before onboarding it as a vendor",
+        "create a durable business counterparty verification attempt",
+        "screen a legal entity using public evidence without an API key",
+        "verify a signed pre-action certification receipt"
+      ]
+    },
+    {
+      "identifier": "urn:air:aux.prdictionedge.ai:doc:counterparty-quickstart",
+      "displayName": "AUX Public Counterparty Check Quickstart",
+      "type": "text/html",
+      "url": "https://aux.prdictionedge.ai/agents/quickstart",
+      "description": "No-signup, no-key quickstart and zero-dependency Node.js client for a real public counterparty check.",
+      "tags": ["quickstart", "example", "nodejs", "no-api-key"],
+      "representativeQueries": [
+        "show me a working AUX counterparty verification example",
+        "try a real company check with GLEIF and OFAC",
+        "integrate AUX without installing a package"
+      ]
+    }
+  ]
+}

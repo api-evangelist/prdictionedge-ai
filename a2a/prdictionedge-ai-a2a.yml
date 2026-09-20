@@ -1,0 +1,115 @@
+generated: '2026-09-19'
+method: probed
+source: https://api.aux.prdictionedge.ai/.well-known/agent-card.json
+card:
+  file: a2a/prdictionedge-ai-agent-card.json
+discovery:
+  path: /.well-known/agent-card.json
+  canonical: true
+  host: api.aux.prdictionedge.ai
+  note: >-
+    The card is served from the API host (the OpenAPI servers[] host and the A2A JSON-RPC host) and is the URL the
+    provider names in llms.txt, the ARD manifest (/.well-known/ard.json), the API index, aux.json and the homepage.
+    The same card is also served at /.well-known/agent-card.json on aux.prdictionedge.ai and www.prdictionedge.ai
+    (content-type application/a2a+json; identical body, key order differs), and a legacy-path variant at
+    /.well-known/agent.json on those two hosts additionally carries top-level `url` and `protocolVersion: "1.0"`
+    (saved verbatim as a2a/prdictionedge-ai-agent-card-legacy.json). The apex prdictionedge.ai 307s every path to
+    www. A negative-control path on api.aux.prdictionedge.ai (/.well-known/agent.json) returns a real JSON 404
+    ({"error":"not_found",...}, 82 bytes), so the 200 is a served document and not a catch-all. Ownership is not in
+    question: provider.organization is "AUX by PrdictionEdge" with provider.url https://aux.prdictionedge.ai, and the
+    OpenAPI on the same host titles itself "AUX Evidence and Certification API".
+conformance:
+  spec: A2A 1.0.0
+  grade: flavored
+  protocol_version: '1.0'
+  protocol_version_location: supportedInterfaces[0].protocolVersion (not top-level)
+  preferred_transport: JSONRPC
+  transport_location: supportedInterfaces[0].protocolBinding
+  deviations:
+  - no-top-level-protocolVersion
+  - no-top-level-url
+  - supportedInterfaces-instead-of-additionalInterfaces
+  note: >-
+    Graded against the pipeline's hard checks as written (capabilities is an object: PASS; skills is an array: PASS;
+    top-level protocolVersion present: FAIL). The card is shaped for the A2A 1.0 `supportedInterfaces` form, which
+    carries url, protocolBinding and protocolVersion per interface rather than at the top level; the legacy-path
+    variant at /.well-known/agent.json passes all three hard checks (capabilities object, top-level protocolVersion
+    "1.0", skills array) and would grade conformant. Recorded as flavored on the canonical-path card so the grade
+    never over-credits; a human reviewer may prefer the legacy-variant grade.
+  legacy_variant:
+    file: a2a/prdictionedge-ai-agent-card-legacy.json
+    source: https://aux.prdictionedge.ai/.well-known/agent.json
+    grade: conformant
+    extra_fields: [url, protocolVersion]
+x-evidence:
+  fetched: '2026-09-19'
+  url: https://api.aux.prdictionedge.ai/.well-known/agent-card.json
+  http_status: 200
+  content_type: application/json; charset=utf-8
+  body_bytes: 8941
+  body_parses_as: JSON object with AgentCard shape (name, description, supportedInterfaces, provider, version, documentationUrl, capabilities, defaultInputModes, defaultOutputModes, skills)
+  corroborating_probes:
+  - url: https://aux.prdictionedge.ai/.well-known/agent-card.json
+    http_status: 200
+    content_type: application/a2a+json; charset=utf-8
+  - url: https://www.prdictionedge.ai/.well-known/agent-card.json
+    http_status: 200
+    content_type: application/a2a+json; charset=utf-8
+  - url: https://aux.prdictionedge.ai/.well-known/agent.json
+    http_status: 200
+    content_type: application/json; charset=utf-8
+    note: Legacy path; body adds top-level url https://api.aux.prdictionedge.ai/a2a/v1 and protocolVersion "1.0".
+  - url: https://prdictionedge.ai/.well-known/agent-card.json
+    http_status: 307
+    note: Apex redirects to https://www.prdictionedge.ai/.well-known/agent-card.json.
+  - url: https://api.aux.prdictionedge.ai/.well-known/agent.json
+    http_status: 404
+    note: Real JSON 404 on the API host (negative control).
+  - url: https://api.aux.prdictionedge.ai/a2a/v1
+    method: GET
+    http_status: 405
+    note: content-type application/a2a+json; the endpoint is POST-only.
+  - url: https://api.aux.prdictionedge.ai/a2a/v1
+    method: POST
+    body: '{"jsonrpc":"2.0","id":1,"method":"agent/getAuthenticatedExtendedCard"}'
+    http_status: 200
+    response: '{"jsonrpc":"2.0","id":1,"error":{"code":-32009,"message":"Protocol version not supported"}}'
+    note: Without an A2A-Version header the responder rejects the call with the A2A-defined version error; with A2A-Version 1.0 the same call returns -32601 Method not found, consistent with capabilities.extendedAgentCard false. No task was created.
+  - url: https://a2aregistry.org
+    note: The card was first seen on the a2a-registry harvest list, which is how this provider entered the backlog; the card above was fetched directly from the provider's host.
+agent_card:
+  name: AUX Evidence and Certification
+  description: Production discovery for bounded independent evidence, signed certification, policy checks, and non-executing single-use handoffs.
+  url: https://api.aux.prdictionedge.ai/a2a/v1
+  version: 0.9.0
+  protocol_version: '1.0'
+  protocol_binding: JSONRPC
+  documentation_url: https://api.aux.prdictionedge.ai/openapi.json
+  provider:
+    organization: AUX by PrdictionEdge
+    url: https://aux.prdictionedge.ai
+  capabilities:
+    streaming: false
+    push_notifications: false
+    extended_agent_card: false
+  default_input_modes: [text/plain, application/json]
+  default_output_modes: [text/plain, application/json]
+  security_schemes: none declared (public; no authentication on the A2A interface)
+  skills: 12
+  skill_ids:
+  - aux-business-identity-evidence
+  - aux-sanctions-evidence
+  - aux-domain-identity-evidence
+  - aux-source-attestation
+  - aux-certification-profiles
+  - aux-certification-attempts
+  - aux-certification
+  - aux-certification-policy-check
+  - aux-domain-certification-policy-check
+  - aux-certified-agent-handoff
+  - aux-handoff-consumption
+  - aux-certification-requirements
+related:
+  openapi: openapi/prdictionedge-ai-openapi.yml
+  ard_manifest: well-known/prdictionedge-ai-aux-ard.json
+  jwks: well-known/prdictionedge-ai-api-jwks.json

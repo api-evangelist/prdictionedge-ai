@@ -1,0 +1,112 @@
+{
+  "status": "descriptor-only-not-an-mcp-transport",
+  "name": "aux_evidence_certification",
+  "title": "AUX Evidence and Certification",
+  "description": "Discover production evidence, certification, policy-check, and non-executing handoff contracts.",
+  "certificationProfiles": {
+    "endpoint": "/v1/certification-profiles",
+    "profiles_version": "aux-certification-profiles-0.1.0",
+    "default_profile_id": "vendor_payment_pre_action",
+    "live_profile_ids": [
+      "vendor_payment_pre_action",
+      "counterparty_registry_pre_action",
+      "counterparty_identity_pre_action"
+    ],
+    "purpose": "Discover every live consequential-action profile AUX can independently certify."
+  },
+  "certificationRequirements": {
+    "endpoint": "/v1/certification-requirements",
+    "price_usd": 0,
+    "purpose": "List exact caller and AUX evidence obligations before independent certification."
+  },
+  "certification": {
+    "endpoint": "/v1/certifications",
+    "verification": "/v1/certifications/verify",
+    "policy_check": "/v1/certifications/policy-check",
+    "domain_policy_check": "/v1/certifications/domain-policy-check",
+    "handoff": "/v1/certification-handoffs",
+    "handoff_verification": "/v1/certification-handoffs/verify",
+    "handoff_consumption": "/v1/certification-handoffs/consume",
+    "handoff_consumption_verification": "/v1/certification-handoffs/consume/verify",
+    "durable_attempts": "/v1/certification-attempts",
+    "attempt_status_template": "/v1/certification-attempts/{attempt_id}",
+    "automatic_source_retry": true,
+    "outcomes": [
+      "CERTIFIED",
+      "REQUIREMENTS_OUTSTANDING",
+      "NOT_CERTIFIABLE",
+      "SOURCE_TEMPORARILY_UNAVAILABLE"
+    ],
+    "rule": "Caller assertions alone never satisfy independent certification. Once caller data is complete, a durable attempt can own retrying temporary source failures without transaction resubmission."
+  },
+  "receiptVerification": {
+    "signed": true,
+    "algorithm": "ES256",
+    "jwks": "/.well-known/jwks.json",
+    "endpoint": "/v1/receipts/verify"
+  },
+  "additional_tools": [
+    {
+      "name": "aux_certification_profiles",
+      "endpoint": "/v1/certification-profiles",
+      "description": "Discover live AUX certification profiles and select the bounded consequential-action contract before submitting evidence."
+    },
+    {
+      "name": "aux_certification_attempt",
+      "endpoint": "/v1/certification-attempts",
+      "description": "Create or reuse a deterministic durable certification attempt. AUX automatically retries SOURCE_TEMPORARILY_UNAVAILABLE with bounded backoff and exposes a polling status URL.",
+      "status_template": "/v1/certification-attempts/{attempt_id}"
+    },
+    {
+      "name": "aux_sanctions_evidence",
+      "endpoint": "/v1/evidence/sanctions",
+      "description": "Resolve bounded official OFAC name-screening evidence directly from Treasury source files.",
+      "verification": "/v1/evidence/verify"
+    },
+    {
+      "name": "aux_domain_identity_evidence",
+      "endpoint": "/v1/evidence/domain-identity",
+      "description": "Resolve registered-domain identity using IANA RDAP plus HTTPS domain-control evidence.",
+      "verification": "/v1/evidence/verify"
+    },
+    {
+      "name": "aux_source_attestation",
+      "endpoint": "/v1/evidence/source-attestation",
+      "description": "Resolve a private evidence source's published trust document and verify its signed attestation before AUX applies it to certification.",
+      "verification": "/v1/evidence/verify"
+    },
+    {
+      "name": "aux_business_identity_evidence",
+      "endpoint": "/v1/evidence/business-identity",
+      "description": "Independently resolve a legal entity against live GLEIF data and return a signed evidence bundle when the identity is exact and current.",
+      "verification": "/v1/evidence/verify"
+    },
+    {
+      "name": "aux_evidence_verify",
+      "endpoint": "/v1/evidence/verify",
+      "description": "Verify an AUX signed evidence bundle and its integrity commitments."
+    },
+    {
+      "name": "aux_certification_policy_check",
+      "endpoint": "/v1/certifications/policy-check",
+      "description": "Verify a portable AUX certification and apply a downstream consumer policy over profile/version, age, required requirement coverage, and optional expected hashes without executing the underlying action."
+    },
+    {
+      "name": "aux_domain_certification_policy_check",
+      "endpoint": "/v1/certifications/domain-policy-check",
+      "description": "Resolve a consumer's published AUX acceptance policy from its HTTPS domain, validate issuer/audience/freshness, and evaluate a signed AUX certification without caller-supplied policy substitution or action execution."
+    },
+    {
+      "name": "aux_certified_agent_handoff",
+      "endpoint": "/v1/certification-handoffs",
+      "verification": "/v1/certification-handoffs/verify",
+      "description": "Create a signed non-executing agent-to-agent handoff only after the recipient domain's independently resolved policy accepts a valid AUX certification."
+    },
+    {
+      "name": "aux_handoff_consumption",
+      "endpoint": "/v1/certification-handoffs/consume",
+      "verification": "/v1/certification-handoffs/consume/verify",
+      "description": "Authenticate the intended recipient, atomically consume a verified handoff once, and return a signed receipt with action_executed=false."
+    }
+  ]
+}

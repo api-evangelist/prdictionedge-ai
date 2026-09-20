@@ -1,0 +1,115 @@
+generated: '2026-09-19'
+method: derived
+source: >-
+  openapi/prdictionedge-ai-openapi.yml (request bodies, attempt_id pattern, CertificationRequest schema) joined with the machine-readable
+  contracts at /v1/certification-profiles, /v1/certification-requirements, /v1/certifications/policy-check and /v1/certification-handoffs/consume.
+  The OpenAPI declares no response schemas, so entity fields below are those named by the contracts and the docs, not a full response model.
+note: >-
+  AUX has no CRUD resources. Its entities are contracts (profiles, requirements, policies), one durable state object (the attempt) and a chain of
+  signed, portable receipts that reference each other by hash — certification -> handoff -> consumption receipt. Identifiers are opaque; the only
+  documented id format is attempt_id ^auxattempt_[a-f0-9]{32}$.
+entities:
+- name: CertificationProfile
+  id: profile_id (enum vendor_payment_pre_action | counterparty_registry_pre_action | counterparty_identity_pre_action)
+  fields: "profile_id, profile_version, status, title, description, consequential_actions[], requirements[], durable_attempts, public_source_only"
+  operations: [getCertificationProfiles]
+- name: CertificationRequirement
+  id: id (transaction_identity | invoice_source_integrity | sanctions_identity | legal_entity_status | domain_identity | vendor_history | bank_destination | agent_authority)
+  fields: "id, title, why, responsibility (CALLER|AUX|BOTH), source_requirement, acceptable_evidence[], required_fields[]"
+  operations: [getCertificationRequirements, evaluateCertificationRequirements]
+- name: CertificationRequest
+  schema: '#/components/schemas/CertificationRequest'
+  fields: "profile_id; proposal{transaction_id, vendor{id,name,lei,domain,registered_address}, invoice{number,amount,artifact_sha256}, payment{bank_fingerprint}, agent{id}, requested_action}; transaction_history[] (<=1000); source_attestations[]{source_domain,jws} (<=20); evidence_bundles[] (<=30)"
+- name: CertificationAttempt
+  id: attempt_id (^auxattempt_[a-f0-9]{32}$, deterministic per request)
+  fields: "attempt_id, status_url, state (CERTIFIED|REQUIREMENTS_OUTSTANDING|NOT_CERTIFIABLE|SOURCE_TEMPORARILY_UNAVAILABLE), result"
+  lifetime: active <= 24 h; terminal retained <= 24 h
+  operations: [createCertificationAttempt, getCertificationAttempt]
+- name: EvidenceBundle
+  signed: true (ES256)
+  kinds: "business_identity (GLEIF), sanctions (OFAC), domain_identity (RDAP + domain control), source_attestation (verified private source)"
+  operations: [resolveBusinessIdentityEvidence, resolveSanctionsEvidence, resolveDomainIdentityEvidence, verifySourceAttestation, verifyAuxEvidence]
+- name: SourceAttestation
+  fields: [source_domain, jws]
+  trust_anchor: source domain's published trust document and key, resolved by AUX
+  operations: [getSourceAttestationContract, verifySourceAttestation]
+- name: Certification
+  aka: signed receipt
+  signed: true (ES256, kid from JWKS)
+  commitments: "certification_id, profile_id, profile_version, status, issued time, proposal hash (sha256), evidence-set hash (sha256), requirements coverage"
+  operations: [certifyTransaction, verifyAuxCertification]
+- name: ConsumerPolicy
+  fields: "policy_id; allowed_profiles[]{profile_id, versions[]}; max_age_seconds (1..604800); required_requirement_ids[]; expected_certification_id; expected_proposal_hash; expected_evidence_set_hash"
+  outcomes: [ACCEPT, REJECT, INVALID_RECEIPT]
+  domain_published_variant: resolved by AUX from the consumer's HTTPS domain (checkAuxCertificationAgainstDomainPolicy)
+  operations: [getAuxCertificationPolicyContract, checkAuxCertificationPolicy, getAuxDomainCertificationPolicyContract, checkAuxCertificationAgainstDomainPolicy]
+- name: Handoff
+  signed: true
+  fields: "handoff_id, sender_agent_id, recipient_agent_id, intended_action, nonce, expires_at (<= 24 h), recipient_domain"
+  operations: [createAuxCertificationHandoff, verifyAuxCertificationHandoff]
+- name: ConsumerAssertion
+  format: JWS Compact, ES256, typ AUX-HANDOFF-CONSUMER+JSON, <= 300 s
+  fields: [schema, issuer, subject, audience, recipient_domain, recipient_agent_id, handoff_id, handoff_sha256, intended_action, jti, issued_at, expires_at]
+  key: https://{recipient_domain}/.well-known/aux-handoff-consumer.json
+- name: ConsumptionReceipt
+  signed: true
+  fields: "outcome (CONSUMED_ONCE|ALREADY_CONSUMED|INVALID_HANDOFF|RECIPIENT_AUTHENTICATION_FAILED), action_executed (always false)"
+  operations: [consumeAuxCertificationHandoff, verifyAuxHandoffConsumptionReceipt]
+relationships:
+- from: CertificationProfile
+  to: CertificationRequirement
+  type: has_many
+  via: "requirements[]"
+- from: CertificationRequest
+  to: CertificationProfile
+  type: belongs_to
+  via: "profile_id"
+- from: CertificationRequest
+  to: SourceAttestation
+  type: has_many
+  via: "source_attestations[]"
+- from: CertificationRequest
+  to: EvidenceBundle
+  type: has_many
+  via: "evidence_bundles[]"
+- from: CertificationAttempt
+  to: CertificationRequest
+  type: belongs_to
+  via: "deterministic attempt_id derived from the request"
+- from: CertificationAttempt
+  to: Certification
+  type: has_one
+  via: "result (when state is CERTIFIED)"
+- from: Certification
+  to: CertificationProfile
+  type: belongs_to
+  via: "profile_id + profile_version"
+- from: Certification
+  to: EvidenceBundle
+  type: has_many
+  via: "evidence-set hash commitment"
+- from: Certification
+  to: CertificationRequirement
+  type: has_many
+  via: "requirements coverage"
+- from: ConsumerPolicy
+  to: Certification
+  type: evaluates
+  via: "checkAuxCertificationPolicy / domain policy"
+- from: Handoff
+  to: Certification
+  type: belongs_to
+  via: "certification commitment"
+- from: Handoff
+  to: ConsumerPolicy
+  type: belongs_to
+  via: "recipient_domain's published policy (gate at creation)"
+- from: ConsumerAssertion
+  to: Handoff
+  type: belongs_to
+  via: "handoff_id + handoff_sha256"
+- from: ConsumptionReceipt
+  to: Handoff
+  type: has_one
+  via: "single-use consumption"
+render: null

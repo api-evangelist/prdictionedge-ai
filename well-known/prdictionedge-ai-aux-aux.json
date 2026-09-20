@@ -1,0 +1,109 @@
+{
+  "manifest_version": "aux-production-1.0",
+  "service": "AUX",
+  "status": "production",
+  "role": "independent_evidence_and_certification",
+  "human_entry": "https://aux.prdictionedge.ai/agents",
+  "endpoints": {
+    "api_index": "https://api.aux.prdictionedge.ai/",
+    "openapi": "https://api.aux.prdictionedge.ai/openapi.json",
+    "mcp_descriptor": "https://api.aux.prdictionedge.ai/mcp-tool.json",
+    "business_identity_evidence": "https://api.aux.prdictionedge.ai/v1/evidence/business-identity",
+    "sanctions_evidence": "https://api.aux.prdictionedge.ai/v1/evidence/sanctions",
+    "domain_identity_evidence": "https://api.aux.prdictionedge.ai/v1/evidence/domain-identity",
+    "source_attestation": "https://api.aux.prdictionedge.ai/v1/evidence/source-attestation",
+    "evidence_verification": "https://api.aux.prdictionedge.ai/v1/evidence/verify",
+    "certification_profiles": "https://api.aux.prdictionedge.ai/v1/certification-profiles",
+    "certification_requirements": "https://api.aux.prdictionedge.ai/v1/certification-requirements",
+    "certification": "https://api.aux.prdictionedge.ai/v1/certifications",
+    "certification_verification": "https://api.aux.prdictionedge.ai/v1/certifications/verify",
+    "certification_attempts": "https://api.aux.prdictionedge.ai/v1/certification-attempts",
+    "certification_policy_check": "https://api.aux.prdictionedge.ai/v1/certifications/policy-check",
+    "certification_domain_policy_check": "https://api.aux.prdictionedge.ai/v1/certifications/domain-policy-check",
+    "certification_handoffs": "https://api.aux.prdictionedge.ai/v1/certification-handoffs",
+    "certification_handoff_verification": "https://api.aux.prdictionedge.ai/v1/certification-handoffs/verify",
+    "certification_handoff_consumption": "https://api.aux.prdictionedge.ai/v1/certification-handoffs/consume",
+    "certification_handoff_consumption_verification": "https://api.aux.prdictionedge.ai/v1/certification-handoffs/consume/verify",
+    "health": "https://api.aux.prdictionedge.ai/api/health",
+    "agent_card": "https://api.aux.prdictionedge.ai/.well-known/agent-card.json",
+    "public_keys": "https://api.aux.prdictionedge.ai/.well-known/jwks.json"
+  },
+  "certification": {
+    "contract_active": true,
+    "profiles_endpoint": "https://api.aux.prdictionedge.ai/v1/certification-profiles",
+    "profiles_version": "aux-certification-profiles-0.1.0",
+    "default_profile_id": "vendor_payment_pre_action",
+    "recommended_first_profile_id": "counterparty_registry_pre_action",
+    "live_profile_ids": [
+      "vendor_payment_pre_action",
+      "counterparty_registry_pre_action",
+      "counterparty_identity_pre_action"
+    ],
+    "certification_endpoint": "https://api.aux.prdictionedge.ai/v1/certifications",
+    "verification_endpoint": "https://api.aux.prdictionedge.ai/v1/certifications/verify",
+    "requirements_endpoint": "https://api.aux.prdictionedge.ai/v1/certification-requirements",
+    "durable_attempts": {
+      "endpoint": "https://api.aux.prdictionedge.ai/v1/certification-attempts",
+      "automatic_retry": true,
+      "retry_backoff_seconds": [
+        60,
+        300,
+        900,
+        1800,
+        3600
+      ],
+      "active_ttl_hours": 24,
+      "terminal_retention_hours": 24
+    },
+    "evidence_channels": [
+      "legal_entity_status:GLEIF_or_source_attestation",
+      "sanctions_identity:official_OFAC_files",
+      "domain_identity:IANA_RDAP_plus_domain_control_or_source_attestation",
+      "invoice_source_integrity:source_attestation",
+      "vendor_history:source_attestation",
+      "bank_destination:source_attestation",
+      "agent_authority:source_attestation"
+    ],
+    "rule": "AUX returns CERTIFIED only when every bounded requirement is satisfied by independently resolved or independently trust-anchored evidence."
+  },
+  "safety": [
+    "AUX verifies bounded evidence and issues signed, non-executing results; it does not perform the downstream action.",
+    "Submit only data required by the selected profile.",
+    "Do not submit secrets or credentials."
+  ],
+  "laboratory": "https://api.aux.prdictionedge.ai/lab",
+  "agent_entry": "https://aux.prdictionedge.ai/agents",
+  "quickstart": "https://aux.prdictionedge.ai/agents/quickstart",
+  "human_site": "https://aux.prdictionedge.ai",
+  "agentic_role": {
+    "classification": "non_executing_agent_trust_infrastructure",
+    "autonomous_capabilities": [
+      "resolve_supported_public_evidence",
+      "verify_source_attestations",
+      "apply_bounded_certification_contracts",
+      "retry_temporary_source_failures",
+      "issue_and_verify_signed_receipts",
+      "apply_consumer_acceptance_policies",
+      "issue_verify_and_atomically_consume_non_executing_handoffs"
+    ],
+    "intentionally_not_supported": [
+      "self_directed_goal_setting",
+      "open_ended_planning",
+      "downstream_action_execution",
+      "payment_execution",
+      "vendor_approval"
+    ],
+    "evidence_url": "https://aux.prdictionedge.ai/agenticness"
+  },
+  "access": {
+    "public_counterparty_profile": {
+      "account_required": false,
+      "api_key_required": false,
+      "payment_required": false,
+      "subscription_required": false,
+      "package_installation_required": false
+    },
+    "commercial_pricing": "not_published",
+    "enterprise_support": "not_published"
+  }
+}

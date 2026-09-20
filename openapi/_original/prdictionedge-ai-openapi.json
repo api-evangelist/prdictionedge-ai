@@ -1,0 +1,957 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "AUX Evidence and Certification API",
+    "version": "aux-preflight-0.2.0",
+    "description": "Production contract. Synthetic experiments and compatibility routes are excluded."
+  },
+  "servers": [
+    {
+      "url": "https://api.aux.prdictionedge.ai"
+    }
+  ],
+  "paths": {
+    "/.well-known/agent-card.json": {
+      "get": {
+        "operationId": "getA2AAgentCard",
+        "summary": "Discover the AUX A2A v1.0 interface and bounded skills",
+        "responses": {
+          "200": {
+            "description": "A2A Agent Card"
+          }
+        }
+      }
+    },
+    "/v1/evidence/sanctions": {
+      "post": {
+        "operationId": "resolveSanctionsEvidence",
+        "summary": "Independently screen a submitted legal name against official OFAC SDN and consolidated primary/alias files and issue a signed evidence bundle",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "vendor"
+                ],
+                "properties": {
+                  "vendor": {
+                    "type": "object",
+                    "required": [
+                      "name"
+                    ],
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Bounded official OFAC name-screening evidence"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "503": {
+            "description": "OFAC source temporarily unavailable"
+          }
+        }
+      }
+    },
+    "/v1/evidence/domain-identity": {
+      "post": {
+        "operationId": "resolveDomainIdentityEvidence",
+        "summary": "Resolve registered-domain evidence through IANA RDAP plus a domain-controlled AUX identity document",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "vendor"
+                ],
+                "properties": {
+                  "vendor": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Independent domain identity evidence or an actionable unresolved result"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "503": {
+            "description": "Domain reference source temporarily unavailable"
+          }
+        }
+      }
+    },
+    "/v1/evidence/source-attestation": {
+      "get": {
+        "operationId": "getSourceAttestationContract",
+        "summary": "Get the trust-document and signed-attestation contract for private evidence sources",
+        "responses": {
+          "200": {
+            "description": "Source attestation trust contract"
+          }
+        }
+      },
+      "post": {
+        "operationId": "verifySourceAttestation",
+        "summary": "Resolve a source-domain trust document and verify a signed private-source evidence attestation",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "source_domain",
+                  "jws"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Signed AUX evidence bundle for a verified source attestation"
+          },
+          "400": {
+            "description": "Invalid or unverifiable source attestation"
+          },
+          "422": {
+            "description": "Source trust is not configured; caller action required"
+          },
+          "503": {
+            "description": "Source trust endpoint temporarily unavailable"
+          }
+        }
+      }
+    },
+    "/v1/evidence/business-identity": {
+      "post": {
+        "operationId": "resolveBusinessIdentityEvidence",
+        "summary": "Independently resolve a legal entity against live GLEIF data and issue a signed evidence bundle when identity is exact and current",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "vendor"
+                ],
+                "properties": {
+                  "vendor": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "lei": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Independent GLEIF identity evidence or an unresolved/ambiguous result"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "503": {
+            "description": "GLEIF source unavailable"
+          }
+        }
+      }
+    },
+    "/v1/evidence/verify": {
+      "post": {
+        "operationId": "verifyAuxEvidence",
+        "summary": "Verify a signed AUX independent-evidence bundle",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "evidence"
+                ],
+                "properties": {
+                  "evidence": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Evidence signature and integrity verification result"
+          },
+          "400": {
+            "description": "Invalid request"
+          }
+        }
+      }
+    },
+    "/v1/certification-profiles": {
+      "get": {
+        "operationId": "getCertificationProfiles",
+        "summary": "Discover every live AUX certification profile and its bounded requirement set",
+        "parameters": [
+          {
+            "name": "profile_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Live certification-profile registry"
+          },
+          "404": {
+            "description": "Unknown profile id"
+          }
+        }
+      }
+    },
+    "/v1/certification-attempts": {
+      "post": {
+        "operationId": "createCertificationAttempt",
+        "summary": "Create or reuse a durable certification attempt that automatically retries temporary evidence-source failures",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CertificationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Existing or immediately terminal attempt"
+          },
+          "202": {
+            "description": "Durable attempt accepted; automatic source retry is active"
+          },
+          "422": {
+            "description": "REQUIREMENTS_OUTSTANDING before an attempt is created"
+          },
+          "503": {
+            "description": "Durable attempt store unavailable"
+          }
+        }
+      }
+    },
+    "/v1/certification-attempts/{attempt_id}": {
+      "get": {
+        "operationId": "getCertificationAttempt",
+        "summary": "Read the current durable certification attempt state without resubmitting the transaction",
+        "parameters": [
+          {
+            "name": "attempt_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^auxattempt_[a-f0-9]{32}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Attempt status"
+          },
+          "400": {
+            "description": "Invalid attempt id"
+          },
+          "404": {
+            "description": "Attempt not found or expired"
+          }
+        }
+      }
+    },
+    "/v1/certifications": {
+      "post": {
+        "operationId": "certifyTransaction",
+        "summary": "Attempt bounded AUX independent certification for the selected live profile using caller data, public reference sources, and verified private-source attestations",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CertificationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Signed CERTIFIED result"
+          },
+          "409": {
+            "description": "NOT_CERTIFIABLE due to adverse independently verified evidence"
+          },
+          "422": {
+            "description": "REQUIREMENTS_OUTSTANDING due to caller/actionable evidence gaps"
+          },
+          "503": {
+            "description": "SOURCE_TEMPORARILY_UNAVAILABLE; no certification decision made"
+          }
+        }
+      }
+    },
+    "/v1/certifications/verify": {
+      "post": {
+        "operationId": "verifyAuxCertification",
+        "summary": "Verify an AUX certification signature and evidence/requirements commitments",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "certification"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Certification verification result"
+          },
+          "400": {
+            "description": "Invalid request"
+          }
+        }
+      }
+    },
+    "/v1/certifications/policy-check": {
+      "get": {
+        "operationId": "getAuxCertificationPolicyContract",
+        "summary": "Get the downstream acceptance-policy contract for portable AUX certifications",
+        "responses": {
+          "200": {
+            "description": "Receipt policy-check contract"
+          }
+        }
+      },
+      "post": {
+        "operationId": "checkAuxCertificationPolicy",
+        "summary": "Verify a signed AUX certification and evaluate it against a downstream consumer policy without executing an action",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "certification",
+                  "policy"
+                ],
+                "properties": {
+                  "certification": {
+                    "type": "object"
+                  },
+                  "policy": {
+                    "type": "object",
+                    "required": [
+                      "policy_id",
+                      "allowed_profiles",
+                      "max_age_seconds"
+                    ],
+                    "properties": {
+                      "policy_id": {
+                        "type": "string"
+                      },
+                      "allowed_profiles": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "profile_id",
+                            "versions"
+                          ],
+                          "properties": {
+                            "profile_id": {
+                              "type": "string"
+                            },
+                            "versions": {
+                              "type": "array",
+                              "minItems": 1,
+                              "items": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "max_age_seconds": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 604800
+                      },
+                      "required_requirement_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "expected_certification_id": {
+                        "type": "string"
+                      },
+                      "expected_proposal_hash": {
+                        "type": "string",
+                        "pattern": "^[a-fA-F0-9]{64}$"
+                      },
+                      "expected_evidence_set_hash": {
+                        "type": "string",
+                        "pattern": "^[a-fA-F0-9]{64}$"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ACCEPT, REJECT, or INVALID_RECEIPT policy result"
+          },
+          "400": {
+            "description": "Invalid request or policy"
+          }
+        }
+      }
+    },
+    "/v1/certifications/domain-policy-check": {
+      "get": {
+        "operationId": "getAuxDomainCertificationPolicyContract",
+        "summary": "Get the domain-resolved consumer-policy interoperability contract",
+        "responses": {
+          "200": {
+            "description": "Domain policy-check contract"
+          }
+        }
+      },
+      "post": {
+        "operationId": "checkAuxCertificationAgainstDomainPolicy",
+        "summary": "Resolve a consumer's published AUX acceptance policy from its HTTPS domain and evaluate a signed AUX certification without executing an action",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "certification",
+                  "consumer_domain"
+                ],
+                "properties": {
+                  "certification": {
+                    "type": "object"
+                  },
+                  "consumer_domain": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ACCEPT, REJECT, or INVALID_RECEIPT under the resolved domain policy"
+          },
+          "400": {
+            "description": "Invalid request or consumer domain"
+          },
+          "422": {
+            "description": "Consumer policy not configured or invalid"
+          },
+          "503": {
+            "description": "Consumer policy source temporarily unavailable"
+          }
+        }
+      }
+    },
+    "/v1/certification-handoffs": {
+      "post": {
+        "operationId": "createAuxCertificationHandoff",
+        "summary": "Create a signed non-executing agent-to-agent handoff after a valid AUX certification is accepted by the independently resolved recipient-domain policy",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "certification",
+                  "recipient_domain",
+                  "handoff"
+                ],
+                "properties": {
+                  "certification": {
+                    "type": "object"
+                  },
+                  "recipient_domain": {
+                    "type": "string"
+                  },
+                  "handoff": {
+                    "type": "object",
+                    "required": [
+                      "handoff_id",
+                      "sender_agent_id",
+                      "recipient_agent_id",
+                      "intended_action",
+                      "nonce",
+                      "expires_at"
+                    ],
+                    "properties": {
+                      "handoff_id": {
+                        "type": "string",
+                        "maxLength": 256
+                      },
+                      "sender_agent_id": {
+                        "type": "string",
+                        "maxLength": 256
+                      },
+                      "recipient_agent_id": {
+                        "type": "string",
+                        "maxLength": 256
+                      },
+                      "intended_action": {
+                        "type": "string",
+                        "maxLength": 256
+                      },
+                      "nonce": {
+                        "type": "string",
+                        "maxLength": 256
+                      },
+                      "expires_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Must be in the future and no more than 24 hours from handoff creation."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "HANDOFF_CERTIFIED signed handoff"
+          },
+          "400": {
+            "description": "Invalid handoff input"
+          },
+          "409": {
+            "description": "Recipient policy rejected the certification; no handoff receipt issued"
+          },
+          "422": {
+            "description": "Invalid certification or recipient policy source not configured/invalid"
+          },
+          "503": {
+            "description": "Recipient policy source or signing capability temporarily unavailable"
+          }
+        }
+      }
+    },
+    "/v1/certification-handoffs/verify": {
+      "post": {
+        "operationId": "verifyAuxCertificationHandoff",
+        "summary": "Verify a signed AUX agent-to-agent handoff, expiry, commitments, and optional expected sender/recipient/action/nonce bindings",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "handoff"
+                ],
+                "properties": {
+                  "handoff": {
+                    "type": "object"
+                  },
+                  "expected": {
+                    "type": "object",
+                    "properties": {
+                      "sender_agent_id": {
+                        "type": "string"
+                      },
+                      "recipient_agent_id": {
+                        "type": "string"
+                      },
+                      "intended_action": {
+                        "type": "string"
+                      },
+                      "nonce": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Handoff signature/binding verification result"
+          },
+          "400": {
+            "description": "Invalid request"
+          }
+        }
+      }
+    },
+    "/v1/certification-handoffs/consume": {
+      "get": {
+        "operationId": "getAuxHandoffConsumptionContract",
+        "summary": "Get the authenticated single-use handoff consumption contract",
+        "responses": {
+          "200": {
+            "description": "Recipient authentication and consumption contract"
+          }
+        }
+      },
+      "post": {
+        "operationId": "consumeAuxCertificationHandoff",
+        "summary": "Authenticate the intended recipient and atomically consume a verified AUX handoff once without executing its action",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "handoff",
+                  "consumer_assertion"
+                ],
+                "properties": {
+                  "handoff": {
+                    "type": "object"
+                  },
+                  "consumer_assertion": {
+                    "type": "object",
+                    "required": [
+                      "recipient_domain",
+                      "jws"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "CONSUMED_ONCE with signed non-executing receipt"
+          },
+          "401": {
+            "description": "Recipient authentication or binding failed"
+          },
+          "409": {
+            "description": "ALREADY_CONSUMED; no second success"
+          },
+          "422": {
+            "description": "Invalid or expired handoff"
+          },
+          "503": {
+            "description": "Trust, storage, HMAC, or signing capability unavailable"
+          }
+        }
+      }
+    },
+    "/v1/certification-handoffs/consume/verify": {
+      "post": {
+        "operationId": "verifyAuxHandoffConsumptionReceipt",
+        "summary": "Verify a signed AUX handoff-consumption receipt and its non-execution boundary",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "consumption_receipt"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Consumption receipt signature and binding verification result"
+          },
+          "400": {
+            "description": "Invalid request"
+          }
+        }
+      }
+    },
+    "/v1/certification-requirements": {
+      "get": {
+        "operationId": "getCertificationRequirements",
+        "summary": "List the evidence contract required for the selected AUX certification profile",
+        "responses": {
+          "200": {
+            "description": "Certification requirement template"
+          }
+        }
+      },
+      "post": {
+        "operationId": "evaluateCertificationRequirements",
+        "summary": "Return profile-specific certification gaps and exact next actions",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CertificationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tailored certification requirement status"
+          },
+          "400": {
+            "description": "Invalid JSON request"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PreflightRequest": {
+        "type": "object",
+        "required": [
+          "proposal",
+          "transaction_history"
+        ],
+        "properties": {
+          "proposal": {
+            "type": "object"
+          },
+          "transaction_history": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "maxItems": 1000
+          }
+        }
+      },
+      "CertificationRequest": {
+        "type": "object",
+        "required": [
+          "proposal"
+        ],
+        "properties": {
+          "profile_id": {
+            "type": "string",
+            "enum": [
+              "vendor_payment_pre_action",
+              "counterparty_registry_pre_action",
+              "counterparty_identity_pre_action"
+            ],
+            "default": "vendor_payment_pre_action"
+          },
+          "proposal": {
+            "type": "object"
+          },
+          "transaction_history": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "maxItems": 1000
+          },
+          "source_attestations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "source_domain",
+                "jws"
+              ]
+            },
+            "maxItems": 20
+          },
+          "evidence_bundles": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "maxItems": 30
+          }
+        },
+        "description": "Select a live profile with profile_id. OpenAPI advertises live profiles only; shadow profiles are intentionally excluded from discovery. Omit profile_id for backwards-compatible vendor_payment_pre_action behavior."
+      },
+      "DelegationRequest": {
+        "type": "object",
+        "required": [
+          "delegation_id",
+          "delegator",
+          "delegate",
+          "issued_at",
+          "expires_at",
+          "nonce",
+          "allowed_actions",
+          "requested_action",
+          "max_amount_usd",
+          "amount_usd"
+        ],
+        "properties": {
+          "delegation_id": {
+            "type": "string"
+          },
+          "delegator": {
+            "type": "string"
+          },
+          "delegate": {
+            "type": "string"
+          },
+          "issued_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "nonce": {
+            "type": "string"
+          },
+          "prior_nonces": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "allowed_actions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "requested_action": {
+            "type": "string"
+          },
+          "max_amount_usd": {
+            "type": "number"
+          },
+          "amount_usd": {
+            "type": "number"
+          }
+        }
+      },
+      "DelegationEnforcementRequest": {
+        "type": "object",
+        "required": [
+          "execution_id",
+          "policy_id",
+          "delegate",
+          "nonce",
+          "requested_action",
+          "amount_usd"
+        ],
+        "properties": {
+          "execution_id": {
+            "type": "string"
+          },
+          "policy_id": {
+            "type": "string",
+            "enum": [
+              "procurement-demo-v1"
+            ]
+          },
+          "delegate": {
+            "type": "string"
+          },
+          "nonce": {
+            "type": "string"
+          },
+          "requested_action": {
+            "type": "string"
+          },
+          "amount_usd": {
+            "type": "number"
+          }
+        },
+        "description": "The acting agent supplies only its proposed action. AUX resolves scope, limits, identity, and consumed nonces from a server-owned synthetic policy fixture."
+      },
+      "InstructionRequest": {
+        "type": "object",
+        "required": [
+          "instruction_id",
+          "content"
+        ],
+        "properties": {
+          "instruction_id": {
+            "type": "string"
+          },
+          "source_trust": {
+            "type": "string",
+            "enum": [
+              "trusted",
+              "unknown",
+              "untrusted"
+            ]
+          },
+          "content": {
+            "type": "string"
+          },
+          "allowed_actions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "requested_action": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

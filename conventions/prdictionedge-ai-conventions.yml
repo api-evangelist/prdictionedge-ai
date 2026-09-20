@@ -1,0 +1,104 @@
+generated: '2026-09-19'
+method: searched
+source: >-
+  https://aux.prdictionedge.ai/agents (certification states, durable attempts, retention), https://aux.prdictionedge.ai/.well-known/aux.json
+  (retry backoff, TTLs), https://api.aux.prdictionedge.ai/api/status (telemetry/retention), the machine-readable contracts returned by GET on
+  /v1/certification-handoffs/consume, /v1/certifications/policy-check and /v1/evidence/source-attestation, plus openapi/prdictionedge-ai-openapi.yml
+  and live unauthenticated responses observed 2026-09-19.
+description: >-
+  Cross-cutting semantics of the AUX Evidence and Certification API: a public JSON-over-HTTPS REST surface whose every result is
+  non-executing — AUX returns evidence, bounded certification states and signed receipts, and never performs the downstream action.
+base_url: https://api.aux.prdictionedge.ai
+api_style: REST over HTTPS, JSON request and response bodies, POST for every evidence/certification call, GET for contracts and discovery
+authentication:
+  scheme: none (public); recipient-domain ES256 JWS assertion on handoff consumption only
+  detail: authentication/prdictionedge-ai-authentication.yml
+idempotency:
+  supported: true
+  coverage: partial
+  scope: [createCertificationAttempt]
+  mechanism: >-
+    Deterministic, request-derived attempt identity. POST /v1/certification-attempts "creates or reuses" a durable attempt: the
+    same complete certification request yields the same attempt_id (pattern ^auxattempt_[a-f0-9]{32}$) and status_url, so a
+    resubmission during a source outage resumes the existing attempt instead of creating a second one. There is no
+    Idempotency-Key header anywhere in the contract.
+  key_format: server-derived attempt_id; no client-supplied key
+  retention: Active attempt at most 24 hours; terminal status/result retrievable for a further 24 hours, then deleted.
+  replay_protection_elsewhere: >-
+    Handoff consumption is single-use — a second consume of the same handoff returns 409 ALREADY_CONSUMED (outcome names from
+    the consumption contract); the handoff itself carries a caller nonce and expires_at (<= 24 h). This is replay protection,
+    not idempotent replay: the second call fails rather than returning the first result.
+  docs: https://aux.prdictionedge.ai/agents
+reversibility:
+  api_has_write_surface: true
+  grade: none
+  summary: >-
+    AUX is non-executing by design: nothing it writes moves money, changes a vendor, or triggers an action, so there is nothing to
+    refund or roll back. Its own state objects have no reversal operation — an attempt cannot be cancelled (it expires: active
+    <= 24 h, terminal retained <= 24 h), a handoff cannot be revoked (it expires at its own expires_at, <= 24 h after creation),
+    and consumption is deliberately irreversible (single-use, replay-protected). The docs state the expiry windows but do not
+    describe any undo, so no reversal path is documented and none is graded.
+  surfaces:
+  - operation: createCertificationAttempt
+    reversal: none
+    window: expires — active <= 24 h, terminal state retained <= 24 h then deleted
+    docs: https://aux.prdictionedge.ai/agents
+  - operation: certifyTransaction
+    reversal: none
+    window: stateless — synchronous request bodies are not stored (api/status synchronous_certification_request_bodies_stored false)
+    docs: https://api.aux.prdictionedge.ai/api/status
+  - operation: createAuxCertificationHandoff
+    reversal: none
+    window: expires at handoff.expires_at, which must be no more than 24 hours from creation
+    docs: openapi/prdictionedge-ai-openapi.yml#createAuxCertificationHandoff
+  - operation: consumeAuxCertificationHandoff
+    reversal: none (irreversible by design; 409 ALREADY_CONSUMED on any repeat)
+    window: not applicable
+    docs: https://api.aux.prdictionedge.ai/v1/certification-handoffs/consume
+dry_run:
+  supported: true
+  mechanism: >-
+    POST /v1/certification-requirements (evaluateCertificationRequirements) evaluates a certification request and returns
+    profile-specific gaps and exact next actions without creating an attempt or issuing a certification; the synthetic
+    laboratory (/lab, /v1/preflight) rehearses the contract on fixtures. See sandbox/prdictionedge-ai-sandbox.yml.
+pagination:
+  style: none
+  note: No list endpoint returns more than one page; profiles and requirements are small fixed documents.
+field_expansion:
+  supported: false
+metadata:
+  supported: false
+request_tracing:
+  request_id_header: none observed
+  note: Live responses carry only Cloudflare cf-ray; no X-Request-Id or traceparent.
+versioning:
+  scheme: uri-path
+  current: v1
+  contract_version: aux-preflight-0.2.0 (info.version; also reported by /api/health)
+  profile_versioning: >-
+    Certification profiles are independently versioned (profile_version 1.0.0 / 0.1.0) and the profile registry is versioned
+    aux-certification-profiles-0.1.0; omitting profile_id preserves the backwards-compatible vendor_payment_pre_action 1.0
+    behaviour. Downstream policies pin allowed_profiles[].versions explicitly.
+  detail: lifecycle/prdictionedge-ai-lifecycle.yml
+error_envelope:
+  shape: '{"error": "<snake_case_code>", ...}'
+  observed_fields: [error, required, retryable, action_executed, documentation, allow]
+  content_type: application/json (not application/problem+json)
+  state_codes: >-
+    Certification outcomes are HTTP-mapped — 200 CERTIFIED, 202 durable attempt accepted, 422 REQUIREMENTS_OUTSTANDING,
+    409 NOT_CERTIFIABLE (or ALREADY_CONSUMED on consume), 503 SOURCE_TEMPORARILY_UNAVAILABLE (no decision made).
+  detail: errors/prdictionedge-ai-problem-types.yml
+rate_limits:
+  documented: false
+  headers: none observed (no RateLimit-* / X-RateLimit-* / Retry-After on a live 200)
+  note: /api/health reports abuse_limiter_present true; the limits themselves are unpublished.
+  detail: rate-limits/prdictionedge-ai-rate-limits.yml
+retry_semantics:
+  server_side: >-
+    Durable attempts retry SOURCE_TEMPORARILY_UNAVAILABLE with backoff [60, 300, 900, 1800, 3600] seconds (aux.json
+    durable_attempts.retry_backoff_seconds); the client polls status_url and must never resubmit the transaction.
+  client_side: 503 responses on synchronous calls carry no decision; 503 on consume carries retryable true/false.
+cors: access-control-allow-origin * ; allowed methods GET, POST, OPTIONS ; cache-control no-store
+data_minimisation: >-
+  Provider instruction on every surface: submit only what the selected profile requires; never passwords, private keys,
+  personal data, raw bank-account numbers or raw confidential invoices — hashes, fingerprints and signed attestations instead.

@@ -1,0 +1,98 @@
+generated: '2026-09-19'
+method: derived
+source: >-
+  openapi/prdictionedge-ai-openapi.yml, a2a/prdictionedge-ai-a2a.yml, well-known/prdictionedge-ai-api-jwks.json,
+  https://api.aux.prdictionedge.ai/api/status (receipt_signing), the GET contracts on /v1/certification-handoffs/consume and
+  /v1/certifications/policy-check, and live probes on 2026-09-19.
+conformance:
+- id: a2a
+  standard: A2A 1.0 (Agent2Agent protocol)
+  conforms: true
+  grade: flavored
+  evidence: >-
+    Agent card served at /.well-known/agent-card.json on api.aux.prdictionedge.ai (HTTP 200, capabilities object, 12 skills, supportedInterfaces
+    JSONRPC protocolVersion 1.0); live JSON-RPC responder at /a2a/v1 returns A2A-defined error -32009 without an A2A-Version header and -32601 for
+    the unimplemented extended-card method. Graded flavored on the pipeline's hard checks because protocolVersion is not top-level; see a2a/.
+- id: jws-rfc7515
+  standard: RFC 7515 JSON Web Signature, ES256 (RFC 7518)
+  conforms: true
+  evidence: "api/status receipt_signing {format JWS, algorithm ES256, current_kid aux-receipt-2026-08-17-03}; every certification, evidence bundle, handoff and consumption receipt is a signed object verifiable via verifyAuxCertification / verifyAuxEvidence / verifyAuxCertificationHandoff / verifyAuxHandoffConsumptionReceipt; consumer assertions are JWS Compact Serialization with typ AUX-HANDOFF-CONSUMER+JSON."
+- id: jwks-rfc7517
+  standard: RFC 7517 JSON Web Key Set
+  conforms: true
+  evidence: https://api.aux.prdictionedge.ai/.well-known/jwks.json serves two EC P-256 keys with kty/crv/x/y/use/alg/kid (well-known/prdictionedge-ai-api-jwks.json).
+- id: rfc8615-well-known
+  standard: RFC 8615 well-known URIs
+  conforms: true
+  evidence: "/.well-known/agent-card.json, /.well-known/jwks.json, /.well-known/ard.json, /.well-known/aux.json served; see well-known/prdictionedge-ai-well-known.yml."
+- id: ard
+  standard: Agent Resource Discovery manifest (specVersion 1.0)
+  conforms: true
+  evidence: https://aux.prdictionedge.ai/.well-known/ard.json lists the A2A card, the OpenAPI and the quickstart with typed entries (application/a2a-agent-card+json, application/vnd.oai.openapi+json).
+- id: openapi-3.1
+  standard: OpenAPI 3.1.0
+  conforms: true
+  evidence: openapi/prdictionedge-ai-openapi.yml — openapi 3.1.0, 23 operations, all with operationId; no tags, no securitySchemes, no response schemas (descriptions only).
+- id: oauth2
+  conforms: false
+  evidence: No securitySchemes; no /.well-known/oauth-authorization-server or oauth-protected-resource on any host (all 404). The API is public.
+- id: oidc
+  conforms: false
+  evidence: "/.well-known/openid-configuration 404 on all four hosts."
+- id: rfc9457
+  standard: RFC 9457 Problem Details
+  conforms: false
+  evidence: "Errors are application/json {\"error\": \"<code>\", ...}; no application/problem+json, no type/title/detail members (errors/prdictionedge-ai-problem-types.yml)."
+- id: rfc9728
+  standard: RFC 9728 Protected Resource Metadata
+  conforms: false
+  evidence: "/.well-known/oauth-protected-resource 404 on api.aux.prdictionedge.ai; not applicable to a public resource."
+- id: rfc9727-api-catalog
+  conforms: false
+  evidence: "/.well-known/api-catalog 404 on every host (an earlier README advertised one on aux.prdictionedge.ai; it is gone). The ARD manifest plays a similar role but is not the RFC 9727 linkset format."
+- id: idempotency
+  conforms: true
+  coverage: partial
+  evidence: Deterministic create-or-reuse semantics on createCertificationAttempt (same request -> same attempt_id and status_url); no Idempotency-Key header. conventions/prdictionedge-ai-conventions.yml.
+- id: pagination
+  conforms: null
+  evidence: Not applicable — no paginated list endpoints.
+- id: json-api
+  conforms: false
+  evidence: Plain JSON objects; no JSON:API envelope.
+- id: rfc8594-sunset
+  conforms: false
+  evidence: No Sunset/Deprecation headers and no deprecation policy (lifecycle/prdictionedge-ai-lifecycle.yml).
+- id: content-signals
+  standard: Cloudflare Content Signals Policy (robots.txt content-signal directives)
+  conforms: true
+  evidence: https://api.aux.prdictionedge.ai/robots.txt carries the Content Signals preamble (search / ai-input / ai-train definitions with the EU DSM Art. 4 reservation); no specific signal values are set, so it neither grants nor restricts.
+domain_standards:
+- id: iso-17442-lei
+  standard: ISO 17442 Legal Entity Identifier (GLEIF)
+  conforms: true
+  declared_in_contract: true
+  evidence: >-
+    openapi/prdictionedge-ai-openapi.yml paths./v1/evidence/business-identity.post.requestBody.content.application/json.schema.properties.vendor.properties.lei
+    (type string) and the quickstart request shape proposal.vendor.lei; the business-identity operation "independently resolve[s] a legal entity against
+    live GLEIF data" and the published example uses LEI HWUPKR0MPOU8FGXBT394 (Apple Inc.). The certification binds the counterparty to its GLEIF legal
+    address rather than a mailing address.
+  market: business counterparty verification / KYB
+- id: ofac-sdn-consolidated
+  standard: US Treasury OFAC SDN and Consolidated Sanctions List source files
+  conforms: true
+  declared_in_contract: true
+  evidence: >-
+    resolveSanctionsEvidence summary — "screen a submitted legal name against official OFAC SDN and consolidated primary/alias files"; api/status
+    independently_resolved_public_sources [GLEIF, OFAC, IANA_RDAP_PLUS_DOMAIN_CONTROL]. Bounded to exact normalized primary/alias name matching by the
+    provider's own statement (not fuzzy or ownership-based).
+  note: A data-source standard consumed by the API rather than a wire format it emits; recorded because the contract names it explicitly.
+- id: rdap-rfc9083
+  standard: RDAP (RFC 9082/9083) via IANA bootstrap
+  conforms: true
+  declared_in_contract: true
+  evidence: resolveDomainIdentityEvidence summary — "Resolve registered-domain evidence through IANA RDAP plus a domain-controlled AUX identity document".
+  note: Consumed as an evidence source for domain identity.
+compliance_programs:
+  published: false
+  note: No trust center, SOC 2 / ISO 27001 claim, security.txt or vulnerability-disclosure page was found (security/ probes empty). No Compliance pointer emitted.

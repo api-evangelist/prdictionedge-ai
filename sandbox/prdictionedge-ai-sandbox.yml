@@ -1,0 +1,67 @@
+generated: '2026-09-19'
+method: searched
+source: https://api.aux.prdictionedge.ai/lab
+sources:
+- https://api.aux.prdictionedge.ai/lab  (laboratory index — "Synthetic fixtures only. These compatibility routes are excluded from default discovery.")
+- https://api.aux.prdictionedge.ai/api/examples  (synthetic_only true; fixtures with expected PROCEED / REVIEW / STOP)
+- https://aux.prdictionedge.ai/agents  ("Synthetic preflight and the public one-call challenge remain synthetic-only.")
+- https://aux.prdictionedge.ai/examples/public-counterparty-check  (real-record public example)
+summary: >-
+  AUX has no separate sandbox host or test-mode key: production and test share https://api.aux.prdictionedge.ai and no credential
+  exists to prefix. The separation is by ROUTE — the /v1 certification endpoints are production and resolve live GLEIF/OFAC/RDAP
+  evidence, while a self-described "non_production_laboratory" under /lab exposes synthetic-only compatibility routes (the earlier
+  transaction-preflight surface) that are excluded from the OpenAPI and from default discovery. Because the production check is
+  free and keyless, the provider's recommended rehearsal is a real public record (Apple Inc.'s GLEIF entry), which is published
+  verbatim below.
+test_vs_live:
+  mode_separation: by route, not by key or host
+  live: https://api.aux.prdictionedge.ai/v1/*  (production; live public evidence; price_usd 0)
+  synthetic: https://api.aux.prdictionedge.ai/lab  (laboratory; synthetic fixtures; not in OpenAPI)
+  key_prefixes: none (no API keys)
+laboratory_routes:
+  challenge: https://api.aux.prdictionedge.ai/api/challenge
+  evaluation: https://api.aux.prdictionedge.ai/api/evaluations
+  examples: https://api.aux.prdictionedge.ai/api/examples
+  control_examples: https://api.aux.prdictionedge.ai/api/control-examples
+  delegation_benchmark: https://api.aux.prdictionedge.ai/api/benchmarks/delegation-enforcement
+  instruction_benchmark: https://api.aux.prdictionedge.ai/api/benchmarks/instruction
+  readiness: https://api.aux.prdictionedge.ai/v1/readiness
+  preflight: https://api.aux.prdictionedge.ai/v1/preflight
+  delegation_preflight: https://api.aux.prdictionedge.ai/v1/delegation/preflight
+  delegation_enforcement: https://api.aux.prdictionedge.ai/v1/delegation/enforce
+  instruction_preflight: https://api.aux.prdictionedge.ai/v1/instruction/preflight
+  warning: Synthetic fixtures only; excluded from default discovery (provider text).
+fixtures:
+  source: https://api.aux.prdictionedge.ai/api/examples
+  synthetic_only: true
+  examples:
+  - id: normal-payment
+    label: Normal repeat payment
+    expected: PROCEED
+    vendor: {id: V-104, name: Acme Industrial Supply LLC}
+    invoice: {number: INV-1004, amount: 10850}
+    bank_fingerprint: bank_acme_8821
+  - id: bank-change
+    label: Unexpected bank change
+    expected: REVIEW
+  note: The lab fixtures exercise the synthetic preflight (PROCEED/REVIEW/STOP) contract, not the production certification states; the DelegationEnforcementRequest schema pins policy_id to the fixture "procurement-demo-v1".
+published_test_values:
+- purpose: Public counterparty check — provider's canonical first-run example
+  profile_id: counterparty_registry_pre_action
+  name: Apple Inc.
+  lei: HWUPKR0MPOU8FGXBT394
+  registered_address:
+    lines: [C/O C T Corporation System, 330 N. Brand Blvd, Suite 700]
+    city: Glendale
+    region: US-CA
+    country: US
+    postal_code: '91203'
+  expected: CERTIFIED with Receipt verification VALID
+  caveat: Provider states "Public records can change; the live response is authoritative." This is a real GLEIF record, not a synthetic value.
+  docs: https://aux.prdictionedge.ai/examples/public-counterparty-check
+dry_run:
+  operation: evaluateCertificationRequirements
+  endpoint: POST https://api.aux.prdictionedge.ai/v1/certification-requirements
+  effect: Returns profile-specific gaps and exact next actions without creating an attempt or issuing a certification.
+time_simulation: none
+fixture_triggers: none beyond the lab example ids

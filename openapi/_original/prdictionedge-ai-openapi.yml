@@ -1,3 +1,5 @@
+# x-archived-from: prdictionedge-ai-openapi.yml
+# x-archived-on: 2026-09-26
 # Verbatim conversion (JSON -> YAML, content unchanged) of https://api.aux.prdictionedge.ai/openapi.json
 # fetched 2026-09-19 (HTTP 200, application/json, 28,650 bytes). Original JSON: openapi/_original/prdictionedge-ai-openapi.json
 # Ownership: servers[] https://api.aux.prdictionedge.ai; info.title 'AUX Evidence and Certification API'; the same host serves

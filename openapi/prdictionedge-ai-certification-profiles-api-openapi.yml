@@ -1,0 +1,32 @@
+openapi: 3.2.0
+info:
+  title: Prdictionedge Ai Certification Profiles API
+  version: aux-preflight-0.2.0
+  description: 'Operations tagged Certification Profiles across 2 of this provider''s published API definitions: prdictionedge-ai-openapi.json, prdictionedge-ai-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.aux.prdictionedge.ai
+tags:
+- name: Certification Profiles
+paths:
+  /v1/certification-profiles:
+    get:
+      operationId: getCertificationProfiles
+      summary: Discover every live AUX certification profile and its bounded requirement set
+      parameters:
+      - name: profile_id
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Live certification-profile registry
+        '404':
+          description: Unknown profile id
+      tags:
+      - Certification Profiles
+    servers:
+    - url: https://api.aux.prdictionedge.ai
+x-refined-from:
+- prdictionedge-ai-openapi.json
+- prdictionedge-ai-openapi.yml

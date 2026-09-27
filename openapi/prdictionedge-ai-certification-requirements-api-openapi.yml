@@ -1,0 +1,75 @@
+openapi: 3.2.0
+info:
+  title: Prdictionedge Ai Certification Requirements API
+  version: aux-preflight-0.2.0
+  description: 'Operations tagged Certification Requirements across 2 of this provider''s published API definitions: prdictionedge-ai-openapi.json, prdictionedge-ai-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.aux.prdictionedge.ai
+tags:
+- name: Certification Requirements
+paths:
+  /v1/certification-requirements:
+    get:
+      operationId: getCertificationRequirements
+      summary: List the evidence contract required for the selected AUX certification profile
+      responses:
+        '200':
+          description: Certification requirement template
+      tags:
+      - Certification Requirements
+    post:
+      operationId: evaluateCertificationRequirements
+      summary: Return profile-specific certification gaps and exact next actions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CertificationRequest'
+      responses:
+        '200':
+          description: Tailored certification requirement status
+        '400':
+          description: Invalid JSON request
+      tags:
+      - Certification Requirements
+    servers:
+    - url: https://api.aux.prdictionedge.ai
+components:
+  schemas:
+    CertificationRequest:
+      type: object
+      required:
+      - proposal
+      properties:
+        profile_id:
+          type: string
+          enum:
+          - vendor_payment_pre_action
+          - counterparty_registry_pre_action
+          - counterparty_identity_pre_action
+          default: vendor_payment_pre_action
+        proposal:
+          type: object
+        transaction_history:
+          type: array
+          items:
+            type: object
+          maxItems: 1000
+        source_attestations:
+          type: array
+          items:
+            type: object
+            required:
+            - source_domain
+            - jws
+          maxItems: 20
+        evidence_bundles:
+          type: array
+          items:
+            type: object
+          maxItems: 30
+      description: Select a live profile with profile_id. OpenAPI advertises live profiles only; shadow profiles are intentionally excluded from discovery. Omit profile_id for backwards-compatible vendor_payment_pre_action behavior.
+x-refined-from:
+- prdictionedge-ai-openapi.json
+- prdictionedge-ai-openapi.yml

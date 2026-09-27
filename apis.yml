@@ -23,6 +23,18 @@ tags:
 - Counterparty Verification
 - Sanctions Screening
 - Legal Entity Identifier
+- KYB
+- Agent Infrastructure
+- Trust and Safety
+- Signed Receipts
+- Agentic Payments
+- A2A
+- Agent-Native
+tags_raw:
+- Company
+- Counterparty Verification
+- Sanctions Screening
+- Legal Entity Identifier
 - Know Your Business
 - Agent Infrastructure
 - Trust and Safety
@@ -31,29 +43,36 @@ tags:
 - A2A
 - agent-native
 apis:
-- name: AUX Evidence and Certification API
+- name: AUX A2A Agent (JSON-RPC)
   description: >-
-    REST API (23 operations, OpenAPI 3.1) for durable business-counterparty certification attempts, evidence
-    resolution (GLEIF business identity, OFAC sanctions, RDAP domain identity, private-source attestations),
-    certification profiles and requirements, signed-receipt verification, downstream policy checks, and signed
-    non-executing agent-to-agent handoffs with single-use consumption. Public profiles need no API key; the
-    handoff-consumption endpoint authenticates the recipient with a domain-published ES256 JWS assertion.
+    A2A 1.0 JSON-RPC interface for the AUX Evidence and Certification agent, exposing twelve bounded skills
+    (business identity evidence, OFAC sanctions evidence, domain identity evidence, source attestation,
+    certification profiles, durable attempts, certification, policy checks, certified handoffs, handoff
+    consumption and certification requirements). Discovered through the Agent Card at /.well-known/agent-card.json
+    on the API host; the endpoint answers JSON-RPC with A2A error codes.
   image: https://aux.prdictionedge.ai/og.png
+  humanURL: https://aux.prdictionedge.ai/agents
+  baseURL: https://api.aux.prdictionedge.ai/a2a/v1
+  tags:
+  - A2A
+  - Agent Infrastructure
+  - Counterparty Verification
+  properties:
+  - type: AgentCard
+    url: a2a/prdictionedge-ai-a2a.yml
+  - type: Documentation
+    url: https://aux.prdictionedge.ai/agenticness
+- aid: prdictionedge-ai:prdictionedge-ai-certification-attempts-api
+  name: AUX by PrdictionEdge Certification Attempts API
+  description: >-
+    The Certification Attempts API from AUX by PrdictionEdge — 2 operation(s) for certification attempts.
   humanURL: https://aux.prdictionedge.ai/agents
   baseURL: https://api.aux.prdictionedge.ai
   tags:
-  - Counterparty Verification
-  - Sanctions Screening
-  - Legal Entity Identifier
-  - Know Your Business
-  - Signed Receipts
-  - Agent Infrastructure
+  - Certification Attempts
   properties:
   - type: OpenAPI
-    url: openapi/prdictionedge-ai-openapi.yml
-  - type: OpenAPI
-    name: Provider-hosted OpenAPI 3.1 (verbatim source of the local copy)
-    url: https://api.aux.prdictionedge.ai/openapi.json
+    url: openapi/prdictionedge-ai-certification-attempts-api-openapi.yml
   - type: Documentation
     url: https://aux.prdictionedge.ai/agents
   - type: APIReference
@@ -68,33 +87,181 @@ apis:
     url: errors/prdictionedge-ai-problem-types.yml
   - type: DataModel
     url: data-model/prdictionedge-ai-data-model.yml
-  - type: Overlay
-    url: overlays/prdictionedge-ai-openapi-overlay.yaml
   - type: Sandbox
     url: sandbox/prdictionedge-ai-sandbox.yml
-  - type: MCPServer
-    url: mcp/prdictionedge-ai-mcp.yml
   - type: ToolCrosswalk
     url: mcp/prdictionedge-ai-tool-crosswalk.yml
-- name: AUX A2A Agent (JSON-RPC)
+- aid: prdictionedge-ai:prdictionedge-ai-certification-handoffs-api
+  name: AUX by PrdictionEdge Certification Handoffs API
   description: >-
-    A2A 1.0 JSON-RPC interface for the AUX Evidence and Certification agent, exposing twelve bounded skills
-    (business identity evidence, OFAC sanctions evidence, domain identity evidence, source attestation,
-    certification profiles, durable attempts, certification, policy checks, certified handoffs, handoff
-    consumption and certification requirements). Discovered through the Agent Card at
-    /.well-known/agent-card.json on the API host; the endpoint answers JSON-RPC with A2A error codes.
-  image: https://aux.prdictionedge.ai/og.png
+    The Certification Handoffs API from AUX by PrdictionEdge — 4 operation(s) for certification handoffs.
   humanURL: https://aux.prdictionedge.ai/agents
-  baseURL: https://api.aux.prdictionedge.ai/a2a/v1
+  baseURL: https://api.aux.prdictionedge.ai
   tags:
-  - A2A
-  - Agent Infrastructure
-  - Counterparty Verification
+  - Certification Handoffs
   properties:
-  - type: AgentCard
-    url: a2a/prdictionedge-ai-a2a.yml
+  - type: OpenAPI
+    url: openapi/prdictionedge-ai-certification-handoffs-api-openapi.yml
   - type: Documentation
-    url: https://aux.prdictionedge.ai/agenticness
+    url: https://aux.prdictionedge.ai/agents
+  - type: APIReference
+    url: https://api.aux.prdictionedge.ai/
+  - type: GettingStarted
+    url: https://aux.prdictionedge.ai/agents/quickstart
+  - type: Authentication
+    url: authentication/prdictionedge-ai-authentication.yml
+  - type: Conventions
+    url: conventions/prdictionedge-ai-conventions.yml
+  - type: ErrorCatalog
+    url: errors/prdictionedge-ai-problem-types.yml
+  - type: DataModel
+    url: data-model/prdictionedge-ai-data-model.yml
+  - type: Sandbox
+    url: sandbox/prdictionedge-ai-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/prdictionedge-ai-tool-crosswalk.yml
+- aid: prdictionedge-ai:prdictionedge-ai-certification-profiles-api
+  name: AUX by PrdictionEdge Certification Profiles API
+  description: >-
+    The Certification Profiles API from AUX by PrdictionEdge — 1 operation(s) for certification profiles.
+  humanURL: https://aux.prdictionedge.ai/agents
+  baseURL: https://api.aux.prdictionedge.ai
+  tags:
+  - Certification Profiles
+  properties:
+  - type: OpenAPI
+    url: openapi/prdictionedge-ai-certification-profiles-api-openapi.yml
+  - type: Documentation
+    url: https://aux.prdictionedge.ai/agents
+  - type: APIReference
+    url: https://api.aux.prdictionedge.ai/
+  - type: GettingStarted
+    url: https://aux.prdictionedge.ai/agents/quickstart
+  - type: Authentication
+    url: authentication/prdictionedge-ai-authentication.yml
+  - type: Conventions
+    url: conventions/prdictionedge-ai-conventions.yml
+  - type: ErrorCatalog
+    url: errors/prdictionedge-ai-problem-types.yml
+  - type: DataModel
+    url: data-model/prdictionedge-ai-data-model.yml
+  - type: Sandbox
+    url: sandbox/prdictionedge-ai-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/prdictionedge-ai-tool-crosswalk.yml
+- aid: prdictionedge-ai:prdictionedge-ai-certification-requirements-api
+  name: AUX by PrdictionEdge Certification Requirements API
+  description: >-
+    The Certification Requirements API from AUX by PrdictionEdge — 1 operation(s) for certification requirements.
+  humanURL: https://aux.prdictionedge.ai/agents
+  baseURL: https://api.aux.prdictionedge.ai
+  tags:
+  - Certification Requirements
+  properties:
+  - type: OpenAPI
+    url: openapi/prdictionedge-ai-certification-requirements-api-openapi.yml
+  - type: Documentation
+    url: https://aux.prdictionedge.ai/agents
+  - type: APIReference
+    url: https://api.aux.prdictionedge.ai/
+  - type: GettingStarted
+    url: https://aux.prdictionedge.ai/agents/quickstart
+  - type: Authentication
+    url: authentication/prdictionedge-ai-authentication.yml
+  - type: Conventions
+    url: conventions/prdictionedge-ai-conventions.yml
+  - type: ErrorCatalog
+    url: errors/prdictionedge-ai-problem-types.yml
+  - type: DataModel
+    url: data-model/prdictionedge-ai-data-model.yml
+  - type: Sandbox
+    url: sandbox/prdictionedge-ai-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/prdictionedge-ai-tool-crosswalk.yml
+- aid: prdictionedge-ai:prdictionedge-ai-certifications-api
+  name: AUX by PrdictionEdge Certifications API
+  description: The Certifications API from AUX by PrdictionEdge — 4 operation(s) for certifications.
+  humanURL: https://aux.prdictionedge.ai/agents
+  baseURL: https://api.aux.prdictionedge.ai
+  tags:
+  - Certifications
+  properties:
+  - type: OpenAPI
+    url: openapi/prdictionedge-ai-certifications-api-openapi.yml
+  - type: Documentation
+    url: https://aux.prdictionedge.ai/agents
+  - type: APIReference
+    url: https://api.aux.prdictionedge.ai/
+  - type: GettingStarted
+    url: https://aux.prdictionedge.ai/agents/quickstart
+  - type: Authentication
+    url: authentication/prdictionedge-ai-authentication.yml
+  - type: Conventions
+    url: conventions/prdictionedge-ai-conventions.yml
+  - type: ErrorCatalog
+    url: errors/prdictionedge-ai-problem-types.yml
+  - type: DataModel
+    url: data-model/prdictionedge-ai-data-model.yml
+  - type: Sandbox
+    url: sandbox/prdictionedge-ai-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/prdictionedge-ai-tool-crosswalk.yml
+- aid: prdictionedge-ai:prdictionedge-ai-evidence-api
+  name: AUX by PrdictionEdge Evidence API
+  description: The Evidence API from AUX by PrdictionEdge — 5 operation(s) for evidence.
+  humanURL: https://aux.prdictionedge.ai/agents
+  baseURL: https://api.aux.prdictionedge.ai
+  tags:
+  - Evidence
+  properties:
+  - type: OpenAPI
+    url: openapi/prdictionedge-ai-evidence-api-openapi.yml
+  - type: Documentation
+    url: https://aux.prdictionedge.ai/agents
+  - type: APIReference
+    url: https://api.aux.prdictionedge.ai/
+  - type: GettingStarted
+    url: https://aux.prdictionedge.ai/agents/quickstart
+  - type: Authentication
+    url: authentication/prdictionedge-ai-authentication.yml
+  - type: Conventions
+    url: conventions/prdictionedge-ai-conventions.yml
+  - type: ErrorCatalog
+    url: errors/prdictionedge-ai-problem-types.yml
+  - type: DataModel
+    url: data-model/prdictionedge-ai-data-model.yml
+  - type: Sandbox
+    url: sandbox/prdictionedge-ai-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/prdictionedge-ai-tool-crosswalk.yml
+- aid: prdictionedge-ai:prdictionedge-ai-well-known-api
+  name: AUX by PrdictionEdge .well Known API
+  description: The .well Known API from AUX by PrdictionEdge — 1 operation(s) for .well known.
+  humanURL: https://aux.prdictionedge.ai/agents
+  baseURL: https://api.aux.prdictionedge.ai
+  tags:
+  - .well Known
+  properties:
+  - type: OpenAPI
+    url: openapi/prdictionedge-ai-well-known-api-openapi.yml
+  - type: Documentation
+    url: https://aux.prdictionedge.ai/agents
+  - type: APIReference
+    url: https://api.aux.prdictionedge.ai/
+  - type: GettingStarted
+    url: https://aux.prdictionedge.ai/agents/quickstart
+  - type: Authentication
+    url: authentication/prdictionedge-ai-authentication.yml
+  - type: Conventions
+    url: conventions/prdictionedge-ai-conventions.yml
+  - type: ErrorCatalog
+    url: errors/prdictionedge-ai-problem-types.yml
+  - type: DataModel
+    url: data-model/prdictionedge-ai-data-model.yml
+  - type: Sandbox
+    url: sandbox/prdictionedge-ai-sandbox.yml
+  - type: ToolCrosswalk
+    url: mcp/prdictionedge-ai-tool-crosswalk.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -170,3 +337,10 @@ x-enrichment:
   status: enriched
   artifacts_added: 34
   pass: local-v3
+x-a2a:
+  verified: true
+  probed: '2026-09-26'
+  url: "https://api.aux.prdictionedge.ai/.well-known/agent-card.json"
+  grade: "flavored"
+  protocol_version: "1.0"
+  control: 404

@@ -1,0 +1,176 @@
+openapi: 3.2.0
+info:
+  title: Prdictionedge Ai Certification Handoffs API
+  version: aux-preflight-0.2.0
+  description: 'Operations tagged Certification Handoffs across 2 of this provider''s published API definitions: prdictionedge-ai-openapi.json, prdictionedge-ai-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.aux.prdictionedge.ai
+tags:
+- name: Certification Handoffs
+paths:
+  /v1/certification-handoffs:
+    post:
+      operationId: createAuxCertificationHandoff
+      summary: Create a signed non-executing agent-to-agent handoff after a valid AUX…
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - certification
+              - recipient_domain
+              - handoff
+              properties:
+                certification:
+                  type: object
+                recipient_domain:
+                  type: string
+                handoff:
+                  type: object
+                  required:
+                  - handoff_id
+                  - sender_agent_id
+                  - recipient_agent_id
+                  - intended_action
+                  - nonce
+                  - expires_at
+                  properties:
+                    handoff_id:
+                      type: string
+                      maxLength: 256
+                    sender_agent_id:
+                      type: string
+                      maxLength: 256
+                    recipient_agent_id:
+                      type: string
+                      maxLength: 256
+                    intended_action:
+                      type: string
+                      maxLength: 256
+                    nonce:
+                      type: string
+                      maxLength: 256
+                    expires_at:
+                      type: string
+                      format: date-time
+                      description: Must be in the future and no more than 24 hours from handoff creation.
+      responses:
+        '200':
+          description: HANDOFF_CERTIFIED signed handoff
+        '400':
+          description: Invalid handoff input
+        '409':
+          description: Recipient policy rejected the certification; no handoff receipt issued
+        '422':
+          description: Invalid certification or recipient policy source not configured/invalid
+        '503':
+          description: Recipient policy source or signing capability temporarily unavailable
+      tags:
+      - Certification Handoffs
+    servers:
+    - url: https://api.aux.prdictionedge.ai
+  /v1/certification-handoffs/verify:
+    post:
+      operationId: verifyAuxCertificationHandoff
+      summary: Verify a signed AUX agent-to-agent handoff, expiry, commitments, and optional…
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - handoff
+              properties:
+                handoff:
+                  type: object
+                expected:
+                  type: object
+                  properties:
+                    sender_agent_id:
+                      type: string
+                    recipient_agent_id:
+                      type: string
+                    intended_action:
+                      type: string
+                    nonce:
+                      type: string
+      responses:
+        '200':
+          description: Handoff signature/binding verification result
+        '400':
+          description: Invalid request
+      tags:
+      - Certification Handoffs
+    servers:
+    - url: https://api.aux.prdictionedge.ai
+  /v1/certification-handoffs/consume:
+    get:
+      operationId: getAuxHandoffConsumptionContract
+      summary: Get the authenticated single-use handoff consumption contract
+      responses:
+        '200':
+          description: Recipient authentication and consumption contract
+      tags:
+      - Certification Handoffs
+    post:
+      operationId: consumeAuxCertificationHandoff
+      summary: Authenticate the intended recipient and atomically consume a verified AUX…
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - handoff
+              - consumer_assertion
+              properties:
+                handoff:
+                  type: object
+                consumer_assertion:
+                  type: object
+                  required:
+                  - recipient_domain
+                  - jws
+      responses:
+        '200':
+          description: CONSUMED_ONCE with signed non-executing receipt
+        '401':
+          description: Recipient authentication or binding failed
+        '409':
+          description: ALREADY_CONSUMED; no second success
+        '422':
+          description: Invalid or expired handoff
+        '503':
+          description: Trust, storage, HMAC, or signing capability unavailable
+      tags:
+      - Certification Handoffs
+    servers:
+    - url: https://api.aux.prdictionedge.ai
+  /v1/certification-handoffs/consume/verify:
+    post:
+      operationId: verifyAuxHandoffConsumptionReceipt
+      summary: Verify a signed AUX handoff-consumption receipt and its non-execution boundary
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - consumption_receipt
+      responses:
+        '200':
+          description: Consumption receipt signature and binding verification result
+        '400':
+          description: Invalid request
+      tags:
+      - Certification Handoffs
+    servers:
+    - url: https://api.aux.prdictionedge.ai
+x-refined-from:
+- prdictionedge-ai-openapi.json
+- prdictionedge-ai-openapi.yml

@@ -1,0 +1,159 @@
+openapi: 3.2.0
+info:
+  title: Prdictionedge Ai Evidence API
+  version: aux-preflight-0.2.0
+  description: 'Operations tagged Evidence across 2 of this provider''s published API definitions: prdictionedge-ai-openapi.json, prdictionedge-ai-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.aux.prdictionedge.ai
+tags:
+- name: Evidence
+paths:
+  /v1/evidence/sanctions:
+    post:
+      operationId: resolveSanctionsEvidence
+      summary: Independently screen a submitted legal name against official OFAC SDN and…
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - vendor
+              properties:
+                vendor:
+                  type: object
+                  required:
+                  - name
+                  properties:
+                    name:
+                      type: string
+      responses:
+        '200':
+          description: Bounded official OFAC name-screening evidence
+        '400':
+          description: Invalid request
+        '503':
+          description: OFAC source temporarily unavailable
+      tags:
+      - Evidence
+    servers:
+    - url: https://api.aux.prdictionedge.ai
+  /v1/evidence/domain-identity:
+    post:
+      operationId: resolveDomainIdentityEvidence
+      summary: Resolve registered-domain evidence through IANA RDAP plus a domain-controlled…
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - vendor
+              properties:
+                vendor:
+                  type: object
+      responses:
+        '200':
+          description: Independent domain identity evidence or an actionable unresolved result
+        '400':
+          description: Invalid request
+        '503':
+          description: Domain reference source temporarily unavailable
+      tags:
+      - Evidence
+    servers:
+    - url: https://api.aux.prdictionedge.ai
+  /v1/evidence/source-attestation:
+    get:
+      operationId: getSourceAttestationContract
+      summary: Get the trust-document and signed-attestation contract for private evidence…
+      responses:
+        '200':
+          description: Source attestation trust contract
+      tags:
+      - Evidence
+    post:
+      operationId: verifySourceAttestation
+      summary: Resolve a source-domain trust document and verify a signed private-source…
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - source_domain
+              - jws
+      responses:
+        '200':
+          description: Signed AUX evidence bundle for a verified source attestation
+        '400':
+          description: Invalid or unverifiable source attestation
+        '422':
+          description: Source trust is not configured; caller action required
+        '503':
+          description: Source trust endpoint temporarily unavailable
+      tags:
+      - Evidence
+    servers:
+    - url: https://api.aux.prdictionedge.ai
+  /v1/evidence/business-identity:
+    post:
+      operationId: resolveBusinessIdentityEvidence
+      summary: Independently resolve a legal entity against live GLEIF data and issue a signed…
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - vendor
+              properties:
+                vendor:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    lei:
+                      type: string
+      responses:
+        '200':
+          description: Independent GLEIF identity evidence or an unresolved/ambiguous result
+        '400':
+          description: Invalid request
+        '503':
+          description: GLEIF source unavailable
+      tags:
+      - Evidence
+    servers:
+    - url: https://api.aux.prdictionedge.ai
+  /v1/evidence/verify:
+    post:
+      operationId: verifyAuxEvidence
+      summary: Verify a signed AUX independent-evidence bundle
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - evidence
+              properties:
+                evidence:
+                  type: object
+      responses:
+        '200':
+          description: Evidence signature and integrity verification result
+        '400':
+          description: Invalid request
+      tags:
+      - Evidence
+    servers:
+    - url: https://api.aux.prdictionedge.ai
+x-refined-from:
+- prdictionedge-ai-openapi.json
+- prdictionedge-ai-openapi.yml

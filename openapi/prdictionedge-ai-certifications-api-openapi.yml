@@ -1,8 +1,8 @@
 openapi: 3.2.0
 info:
-  title: Prdictionedge Ai Certifications API
+  title: AUX Evidence and Certification Certifications API
   version: aux-preflight-0.2.0
-  description: 'Operations tagged Certifications across 2 of this provider''s published API definitions: prdictionedge-ai-openapi.json, prdictionedge-ai-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: Production contract. Synthetic experiments and compatibility routes are excluded.
 servers:
 - url: https://api.aux.prdictionedge.ai
 tags:
@@ -29,8 +29,6 @@ paths:
           description: SOURCE_TEMPORARILY_UNAVAILABLE; no certification decision made
       tags:
       - Certifications
-    servers:
-    - url: https://api.aux.prdictionedge.ai
   /v1/certifications/verify:
     post:
       operationId: verifyAuxCertification
@@ -50,8 +48,6 @@ paths:
           description: Invalid request
       tags:
       - Certifications
-    servers:
-    - url: https://api.aux.prdictionedge.ai
   /v1/certifications/policy-check:
     get:
       operationId: getAuxCertificationPolicyContract
@@ -124,8 +120,6 @@ paths:
           description: Invalid request or policy
       tags:
       - Certifications
-    servers:
-    - url: https://api.aux.prdictionedge.ai
   /v1/certifications/domain-policy-check:
     get:
       operationId: getAuxDomainCertificationPolicyContract
@@ -163,8 +157,6 @@ paths:
           description: Consumer policy source temporarily unavailable
       tags:
       - Certifications
-    servers:
-    - url: https://api.aux.prdictionedge.ai
 components:
   schemas:
     CertificationRequest:
@@ -200,6 +192,3 @@ components:
             type: object
           maxItems: 30
       description: Select a live profile with profile_id. OpenAPI advertises live profiles only; shadow profiles are intentionally excluded from discovery. Omit profile_id for backwards-compatible vendor_payment_pre_action behavior.
-x-refined-from:
-- prdictionedge-ai-openapi.json
-- prdictionedge-ai-openapi.yml

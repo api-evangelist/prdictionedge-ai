@@ -1,8 +1,8 @@
 openapi: 3.2.0
 info:
-  title: Prdictionedge Ai Certification Requirements API
+  title: AUX Evidence and Certification Certification Requirements…
   version: aux-preflight-0.2.0
-  description: 'Operations tagged Certification Requirements across 2 of this provider''s published API definitions: prdictionedge-ai-openapi.json, prdictionedge-ai-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: Production contract. Synthetic experiments and compatibility routes are excluded.
 servers:
 - url: https://api.aux.prdictionedge.ai
 tags:
@@ -33,8 +33,6 @@ paths:
           description: Invalid JSON request
       tags:
       - Certification Requirements
-    servers:
-    - url: https://api.aux.prdictionedge.ai
 components:
   schemas:
     CertificationRequest:
@@ -70,6 +68,3 @@ components:
             type: object
           maxItems: 30
       description: Select a live profile with profile_id. OpenAPI advertises live profiles only; shadow profiles are intentionally excluded from discovery. Omit profile_id for backwards-compatible vendor_payment_pre_action behavior.
-x-refined-from:
-- prdictionedge-ai-openapi.json
-- prdictionedge-ai-openapi.yml

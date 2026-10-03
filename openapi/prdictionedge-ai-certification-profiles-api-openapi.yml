@@ -1,8 +1,8 @@
 openapi: 3.2.0
 info:
-  title: Prdictionedge Ai Certification Profiles API
+  title: AUX Evidence and Certification Certification Profiles API
   version: aux-preflight-0.2.0
-  description: 'Operations tagged Certification Profiles across 2 of this provider''s published API definitions: prdictionedge-ai-openapi.json, prdictionedge-ai-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: Production contract. Synthetic experiments and compatibility routes are excluded.
 servers:
 - url: https://api.aux.prdictionedge.ai
 tags:
@@ -25,8 +25,3 @@ paths:
           description: Unknown profile id
       tags:
       - Certification Profiles
-    servers:
-    - url: https://api.aux.prdictionedge.ai
-x-refined-from:
-- prdictionedge-ai-openapi.json
-- prdictionedge-ai-openapi.yml

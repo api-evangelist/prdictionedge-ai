@@ -1,8 +1,8 @@
 openapi: 3.2.0
 info:
-  title: Prdictionedge Ai Evidence API
+  title: AUX and Certification Evidence API
   version: aux-preflight-0.2.0
-  description: 'Operations tagged Evidence across 2 of this provider''s published API definitions: prdictionedge-ai-openapi.json, prdictionedge-ai-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: Production contract. Synthetic experiments and compatibility routes are excluded.
 servers:
 - url: https://api.aux.prdictionedge.ai
 tags:
@@ -37,8 +37,6 @@ paths:
           description: OFAC source temporarily unavailable
       tags:
       - Evidence
-    servers:
-    - url: https://api.aux.prdictionedge.ai
   /v1/evidence/domain-identity:
     post:
       operationId: resolveDomainIdentityEvidence
@@ -63,8 +61,6 @@ paths:
           description: Domain reference source temporarily unavailable
       tags:
       - Evidence
-    servers:
-    - url: https://api.aux.prdictionedge.ai
   /v1/evidence/source-attestation:
     get:
       operationId: getSourceAttestationContract
@@ -97,8 +93,6 @@ paths:
           description: Source trust endpoint temporarily unavailable
       tags:
       - Evidence
-    servers:
-    - url: https://api.aux.prdictionedge.ai
   /v1/evidence/business-identity:
     post:
       operationId: resolveBusinessIdentityEvidence
@@ -128,8 +122,6 @@ paths:
           description: GLEIF source unavailable
       tags:
       - Evidence
-    servers:
-    - url: https://api.aux.prdictionedge.ai
   /v1/evidence/verify:
     post:
       operationId: verifyAuxEvidence
@@ -152,8 +144,3 @@ paths:
           description: Invalid request
       tags:
       - Evidence
-    servers:
-    - url: https://api.aux.prdictionedge.ai
-x-refined-from:
-- prdictionedge-ai-openapi.json
-- prdictionedge-ai-openapi.yml

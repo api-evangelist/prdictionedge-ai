@@ -184,6 +184,8 @@ apis:
   humanURL: https://aux.prdictionedge.ai/agents
   baseURL: https://api.aux.prdictionedge.ai
   tags:
+  - Certification
+  tags_raw:
   - Certifications
   properties:
   - type: OpenAPI

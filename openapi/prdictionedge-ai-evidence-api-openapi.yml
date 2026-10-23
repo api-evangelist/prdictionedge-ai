@@ -144,3 +144,9 @@ paths:
           description: Invalid request
       tags:
       - Evidence
+x-provenance:
+  method: harvested
+  publisher: AUX by PrdictionEdge
+  source: https://api.aux.prdictionedge.ai/openapi.json
+  note: split by refine-openapis from the provider's own published document, verified by fetch (openapi/_original/*.fetch.json);
+    stamped by stamp-openapi-provenance.py (roadmap#793)

@@ -192,3 +192,9 @@ components:
             type: object
           maxItems: 30
       description: Select a live profile with profile_id. OpenAPI advertises live profiles only; shadow profiles are intentionally excluded from discovery. Omit profile_id for backwards-compatible vendor_payment_pre_action behavior.
+x-provenance:
+  method: harvested
+  publisher: AUX by PrdictionEdge
+  source: https://api.aux.prdictionedge.ai/openapi.json
+  note: split by refine-openapis from the provider's own published document, verified by fetch (openapi/_original/*.fetch.json);
+    stamped by stamp-openapi-provenance.py (roadmap#793)
